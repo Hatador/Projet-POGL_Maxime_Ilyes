@@ -128,8 +128,12 @@ class CModele extends Observable {
             case "d" -> cellules[c.coordx()+1][c.coordy()];
             default -> throw new IllegalStateException("Invalid mouvement");
         };
+        if (c1.etat == 0){
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
+    } else{
+        c1=c;
+    }
        notifyObservers();
 
     }
