@@ -71,12 +71,12 @@ class CModele extends Observable {
 
         // placement de l'helico + artefacts 
         Random r = new Random();
-        int low = 0;
-        int high = LARGEUR+1;   // la fenetre de tirage a ete reduite pour ne pas placer un objet sur un coin 
+        int low = 5;
+        int high = LARGEUR-5;   // la fenetre de tirage a ete reduite pour ne pas placer un objet sur un coin 
         for (int k=3;k<=7;k++){
             int i = r.nextInt(high-low) + low;
             int j = r.nextInt(high-low) + low;
-            while (cellules[i][j].etat >1 && cellules[i][j].j ==null  ){    // on  verifie que la case tiré soit valide sinon on en tire une autre 
+            while (cellules[i][j].etat >1 && cellules[i][j].j == null  ){    // on  verifie que la case tiré soit valide sinon on en tire une autre 
             i = r.nextInt(high-low) + low;
             j = r.nextInt(high-low) + low;
             }
@@ -121,17 +121,16 @@ class CModele extends Observable {
 
     public void tour(String a ){
         Cellule c = emplacementjoueur(); 
-        Cellule c1; 
-        switch(a){
-            case "z" : c1=cellules[c.coordx()][c.coordy()-1] ; 
-            case "s":  c1=cellules[c.coordx()][c.coordy()+1] ;
-            case "q":  c1=cellules[c.coordx()-1][c.coordy()] ;
-            case "d" : c1=cellules[c.coordx()+1][c.coordy()] ;
-        
+        Cellule c1 = switch (a) {
+            case "z" -> cellules[c.coordx()][c.coordy()-1];
+            case "q" -> cellules[c.coordx()-1][c.coordy()];
+            case "s" -> cellules[c.coordx()][c.coordy()+1];
+            case "d" -> cellules[c.coordx()+1][c.coordy()];
+            default -> throw new IllegalStateException("Invalid mouvement");
+        };
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
-        }
-        notifyObservers();
+       notifyObservers();
 
     }
 
@@ -321,19 +320,45 @@ class VueGrille extends JPanel implements Observer {
 class VueCommandes extends JPanel {
 
     private CModele modele;
-
+    public static JButton boutonAvance ;  
+    public static JButton boutonHaut ;
+    public static JButton boutonGauche ;
+    public static JButton boutonDroite ;
+    public static JButton boutonBas ;
 
     public VueCommandes(CModele modele) {
         this.modele = modele;
 
         JButton boutonAvance = new JButton("Fin de tour");
         this.add(boutonAvance);
+        this.boutonAvance= boutonAvance; 
+        JButton boutonHaut = new JButton("Haut ");
+        this.add(boutonHaut); 
+        this.boutonHaut= boutonHaut; 
+
+        JButton boutonGauche = new JButton("Gauche ");
+        this.add(boutonGauche); 
+        this.boutonGauche= boutonGauche; 
+
+        JButton boutonDroite = new JButton("Droite");
+        this.add(boutonDroite); 
+        this.boutonDroite= boutonDroite; 
+
+        JButton boutonBas = new JButton("Bas");
+        this.add(boutonBas); 
+        this.boutonBas= boutonBas; 
 
         Controleur ctrl = new Controleur(modele);
+        Controleur haut= new Controleur(modele);
+        Controleur Bas= new Controleur(modele);
+        Controleur Droite= new Controleur(modele);
+        Controleur Gauche= new Controleur(modele);
 
+        boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
-
-
+        boutonBas.addActionListener(Bas);
+        boutonDroite.addActionListener(Droite);
+        boutonGauche.addActionListener(Gauche);
 
     }
 }
@@ -344,6 +369,25 @@ class Controleur implements ActionListener {
     public Controleur(CModele modele) { this.modele = modele; }
 
     public void actionPerformed(ActionEvent e) {
-        modele.avance();
+
+        JButton actionSource = (JButton) e.getSource(); 
+
+        if ( actionSource.equals(VueCommandes.boutonAvance )) {
+            modele.avance();
     }
+
+        if ( actionSource.equals(VueCommandes.boutonHaut)) {
+        modele.tour("z");
+    }
+        if ( actionSource.equals(VueCommandes.boutonGauche)) {
+        modele.tour("q");
+    }
+        if ( actionSource.equals(VueCommandes.boutonBas)) {
+        modele.tour("s");
+    }
+        if ( actionSource.equals(VueCommandes.boutonDroite)) {
+        modele.tour("d");
+    }
+    
+}
 }
