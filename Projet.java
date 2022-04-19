@@ -1,6 +1,7 @@
 //Projet
 
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -12,7 +13,6 @@ interface Observer {
 
 }
 
-
 abstract class Observable {
 
     private ArrayList<Observer> observers;
@@ -22,8 +22,6 @@ abstract class Observable {
     public void addObserver(Observer o) {
         observers.add(o);
     }
-
-
 
     public void notifyObservers() {
         for(Observer o : observers) {
@@ -49,7 +47,8 @@ class CModele extends Observable {
     public static final int HAUTEUR=40, LARGEUR=40;
 
     private Cellule[][] cellules;
-
+    public  ArrayList<Joueur> Tjoueurs ; 
+    public Joueur Joueuractuel ; 
 
     public CModele() {
 
@@ -62,12 +61,24 @@ class CModele extends Observable {
         init();
     }
 
-
     public void init() {
 
         // placement des joueurs 
+        this.Tjoueurs = new ArrayList<Joueur>(); 
         Joueur J1 = new Joueur(this, 1); 
-        cellules[2][2].ajoutejoueur(J1); 
+        this.Tjoueurs.add(J1) ;  
+        Joueur J2 = new Joueur(this, 2); 
+        this.Tjoueurs.add(J2); 
+        Joueur J3 = new Joueur(this, 3); 
+        this.Tjoueurs.add(J3); 
+        Joueur J4 = new Joueur(this, 4); 
+        this.Tjoueurs.add(J4);
+        
+        this.Joueuractuel=J1; 
+
+        for(int i=1;i<=4;i++){
+            cellules[i][i].j=Tjoueurs.get(i-1); 
+        }
 
         // placement de l'helico + artefacts 
         Random r = new Random();
@@ -83,6 +94,10 @@ class CModele extends Observable {
 
             cellules[i][j].etat = k ;
         }
+    }
+
+    public CModele(ArrayList<Joueur> tjoueurs) {
+        Tjoueurs = tjoueurs;
     }
 
     public void avance() { 
@@ -107,10 +122,10 @@ class CModele extends Observable {
 
         notifyObservers();
     }
-    public Cellule emplacementjoueur(){
+    public Cellule emplacementjoueur(Joueur J){
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
-                if (cellules[i][j].contientjoueur()){
+                if (cellules[i][j].contientjoueur(J)){
                     Cellule C= cellules[i][j] ;
                     return C ;   
                 }
@@ -118,9 +133,8 @@ class CModele extends Observable {
         }
         return null;
     }
-
-    public void tour(String a ){
-        Cellule c = emplacementjoueur(); 
+    public void tour(String a,Joueur J){
+        Cellule c = emplacementjoueur(J); 
         Cellule c1 = switch (a) {
             case "z" -> cellules[c.coordx()][c.coordy()-1];
             case "q" -> cellules[c.coordx()-1][c.coordy()];
@@ -132,10 +146,22 @@ class CModele extends Observable {
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
-        c1=c;
+        return ; 
     }
        notifyObservers();
+    }
 
+    public void Joueursuivant(Joueur j ){
+        int i =0; 
+        while (this.Tjoueurs.get(i)!=j){
+            i++; 
+        }
+        if (i==this.Tjoueurs.size()-1 ){
+            this.Joueuractuel=this.Tjoueurs.get(0); 
+        }
+        else{
+            this.Joueuractuel=this.Tjoueurs.get(i+1); 
+        }
     }
 
 
@@ -169,18 +195,19 @@ class Joueur {
         this.id= id; 
         this.EnVie=true; 
     }
-    
+    public int getidjoueur(){
+        return this.id; 
+    } 
 }
 
 class Cellule {
 
     private CModele modele;
 
-
     protected int etat;
 
     private final int x, y;
-    Joueur j ; 
+    public Joueur j ; 
     public Cellule(CModele modele, int x, int y,Joueur j ) {
         this.modele = modele;
         this.etat = 0;
@@ -199,12 +226,11 @@ class Cellule {
         etat = prochainEtat;
     }
 
-
     public int estVivante() {
         return etat;
     }
-    public boolean contientjoueur(){
-        return this.j!=null ; 
+    public boolean contientjoueur(Joueur J ){
+         return this.j == J ; 
     }
    public int coordx(){
         return this.x; 
@@ -300,9 +326,15 @@ class VueGrille extends JPanel implements Observer {
         if (c.estVivante() == 3) {
             g.setColor(Color.darkGray);                    // helico (3) en gris foncé 
         }
-        if (c.contientjoueur()){
+        for (int i=0;i<modele.Tjoueurs.size();i++){
+            if (c.contientjoueur(modele.Tjoueurs.get(i))){
+                g.setColor(Color.BLACK);
+            }
+        }
+        if (c.contientjoueur(modele.Joueuractuel)){
             g.setColor(Color.RED);
         }
+        
         if (c.estVivante()==4){
             g.setColor(Color.CYAN);                           // eau (4)   en cyan 
         }
@@ -375,31 +407,30 @@ class Controleur implements ActionListener {
     public Controleur(CModele modele) { this.modele = modele; }
 
     public void actionPerformed(ActionEvent e) {
-        System.out.println(cpt); 
-
+        Joueur j =modele.Joueuractuel; 
         JButton actionSource = (JButton) e.getSource(); 
-
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
+            modele.Joueursuivant(j);
             cpt=0;
     }
         if (cpt>2){
             return ; 
         }
         else if ( actionSource.equals(VueCommandes.boutonHaut)) {   // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
-            modele.tour("z");
+            modele.tour("z",j);
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonGauche)) {
-            modele.tour("q");
+            modele.tour("q",j);
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonBas)) {
-            modele.tour("s");
+            modele.tour("s",j);
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonDroite)) {
-            modele.tour("d");
+            modele.tour("d",j);
             cpt+=1; 
     }
     
