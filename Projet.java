@@ -366,27 +366,37 @@ class VueCommandes extends JPanel {
 class Controleur implements ActionListener {
 
     CModele modele;
+    private static int cpt;        // pour limiter le nombre d'action on implemente un compteur 
+
     public Controleur(CModele modele) { this.modele = modele; }
 
     public void actionPerformed(ActionEvent e) {
+        System.out.println(cpt); 
 
         JButton actionSource = (JButton) e.getSource(); 
 
-        if ( actionSource.equals(VueCommandes.boutonAvance )) {
+        if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
+            cpt=0;
     }
-
-        if ( actionSource.equals(VueCommandes.boutonHaut)) {
-        modele.tour("z");
+        if (cpt>2){
+            return ; 
+        }
+        else if ( actionSource.equals(VueCommandes.boutonHaut)) {   // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
+            modele.tour("z");
+            cpt+=1; 
     }
-        if ( actionSource.equals(VueCommandes.boutonGauche)) {
-        modele.tour("q");
+        else if ( actionSource.equals(VueCommandes.boutonGauche)) {
+            modele.tour("q");
+            cpt+=1; 
     }
-        if ( actionSource.equals(VueCommandes.boutonBas)) {
-        modele.tour("s");
+        else if ( actionSource.equals(VueCommandes.boutonBas)) {
+            modele.tour("s");
+            cpt+=1; 
     }
-        if ( actionSource.equals(VueCommandes.boutonDroite)) {
-        modele.tour("d");
+        else if ( actionSource.equals(VueCommandes.boutonDroite)) {
+            modele.tour("d");
+            cpt+=1; 
     }
     
 }
