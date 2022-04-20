@@ -142,7 +142,7 @@ class CModele extends Observable {
             case "d" -> cellules[c.coordx()+1][c.coordy()];
             default -> throw new IllegalStateException("Invalid mouvement");
         };
-        if (c1.etat == 0){
+        if (c1.etat == 0 && c1.getjoueur() == null){
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
@@ -150,6 +150,29 @@ class CModele extends Observable {
     }
        notifyObservers();
     }
+
+    public void seche(Joueur J){
+        
+        Cellule c = emplacementjoueur(J); 
+        Cellule c1 = cellules[c.coordx()][c.coordy()-1];
+        Cellule c2 = cellules[c.coordx()-1][c.coordy()];
+        Cellule c3 = cellules[c.coordx()][c.coordy()+1];
+        Cellule c4 = cellules[c.coordx()+1][c.coordy()];
+
+        if (c1.etat == 1){c1.etat = 0;}
+        if (c2.etat == 1){c2.etat = 0;}
+        if (c3.etat == 1){c3.etat = 0;}
+        if (c4.etat == 1){c4.etat = 0;}
+       
+
+        
+
+        
+        
+        notifyObservers();
+    }
+
+    
 
     public void Joueursuivant(Joueur j ){
         int i =0; 
@@ -361,6 +384,7 @@ class VueCommandes extends JPanel {
     public static JButton boutonGauche ;
     public static JButton boutonDroite ;
     public static JButton boutonBas ;
+    public static JButton boutonSeche ;
 
     public VueCommandes(CModele modele) {
         this.modele = modele;
@@ -384,17 +408,23 @@ class VueCommandes extends JPanel {
         this.add(boutonBas); 
         this.boutonBas= boutonBas; 
 
+        JButton boutonSeche = new JButton("Seche");
+        this.add(boutonSeche); 
+        this.boutonSeche= boutonSeche; 
+
         Controleur ctrl = new Controleur(modele);
         Controleur haut= new Controleur(modele);
         Controleur Bas= new Controleur(modele);
         Controleur Droite= new Controleur(modele);
         Controleur Gauche= new Controleur(modele);
+        Controleur Seche= new Controleur(modele);
 
         boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
         boutonBas.addActionListener(Bas);
         boutonDroite.addActionListener(Droite);
         boutonGauche.addActionListener(Gauche);
+        boutonSeche.addActionListener(Seche);
 
     }
 }
@@ -433,6 +463,10 @@ class Controleur implements ActionListener {
             modele.tour("d",j);
             cpt+=1; 
     }
+        else if ( actionSource.equals(VueCommandes.boutonSeche)) {
+            modele.seche(j);
+            cpt+=1; 
+}
     
 }
 }
