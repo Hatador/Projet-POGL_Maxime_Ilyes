@@ -62,7 +62,18 @@ class CModele extends Observable {
     }
 
     public void init() {
+        //creation de l'ile(=submergement des cotés)
+        //outre le coté realiste d'une telle grille ceci evite que le joueur aille en dehors de la liste vu qu'il ne pêut pas aller sur des cases submérgés
+        int a=1; 
+        for(int i=0;i<=LARGEUR;i++){
+            cellules[i][a].etat=2; 
+            cellules[i][HAUTEUR-a+1].etat=2; 
+        }
 
+        for(int i=0;i<=HAUTEUR;i++){
+            cellules[a][i].etat=2; 
+            cellules[LARGEUR-a+1][i].etat=2; 
+        }
         // placement des joueurs 
         this.Tjoueurs = new ArrayList<Joueur>(); 
         Joueur J1 = new Joueur(this, 1); 
@@ -76,8 +87,8 @@ class CModele extends Observable {
         
         this.Joueuractuel=J1; 
 
-        for(int i=1;i<=4;i++){
-            cellules[i][i].j=Tjoueurs.get(i-1); 
+        for(int i=2;i<=5;i++){
+            cellules[i][i].j=Tjoueurs.get(i-2); 
         }
 
         // placement de l'helico + artefacts 
@@ -142,11 +153,13 @@ class CModele extends Observable {
             case "d" -> cellules[c.coordx()+1][c.coordy()];
             default -> throw new IllegalStateException("Invalid mouvement");
         };
-        if (c1.etat == 0 && c1.getjoueur() == null){
+        if (c1.etat != 2 && c1.getjoueur() == null){
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
-        return ; 
+        JLabel label = new JLabel("Case submérgé  ", JLabel.CENTER); 
+        JFrame frame = new JFrame("Rien ");frame.add(label);frame.setLocation(800, 10);  frame.setSize(200,200); frame.setVisible(true);
+        throw new IllegalStateException("Case submérgé "); 
     }
        notifyObservers();
     }
@@ -163,12 +176,10 @@ class CModele extends Observable {
         if (c2.etat == 1){c2.etat = 0;}
         if (c3.etat == 1){c3.etat = 0;}
         if (c4.etat == 1){c4.etat = 0;}
-       
+        else{JLabel label = new JLabel("Aucune case a secher ici", JLabel.CENTER);
+            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
+            throw new IllegalStateException("Aucune case inondée");}
 
-        
-
-        
-        
         notifyObservers();
     }
 
@@ -185,6 +196,30 @@ class CModele extends Observable {
         else{
             this.Joueuractuel=this.Tjoueurs.get(i+1); 
         }
+    }
+    public void recupereartefact(Joueur J, Cellule C){
+        JLabel label= new JLabel("?"); 
+        switch (C.etat) {
+            case 4 : if (J.possedeclé("eau")){J.recoiteartefact("eau");}else {
+                label = new JLabel("Clé manquante (eau) ",JLabel.CENTER);
+                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+                throw new IllegalStateException("C"); }; break ;
+            case 5 :  if (J.possedeclé("terre")){J.recoiteartefact("terre");}else {
+                label = new JLabel("Clé manquante (terre) ",JLabel.CENTER);
+                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+                throw new IllegalStateException("C"); }; break ;
+            case 6 : if (J.possedeclé("air")){J.recoiteartefact("air");}else {
+                label = new JLabel("Clé manquante (air) ",JLabel.CENTER);
+                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+                throw new IllegalStateException("C"); }; break ;
+            case 7 : if (J.possedeclé("feu")){J.recoiteartefact("feu");} else {
+                label = new JLabel("Clé manquante (feu) ",JLabel.CENTER);
+                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+                throw new IllegalStateException("C"); }; break ;
+            default : label = new JLabel("Aucun artefact ici ",JLabel.CENTER);
+                    JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
+                    throw new IllegalStateException("C"); 
+        };               
     }
 
 
@@ -204,6 +239,23 @@ class CModele extends Observable {
     public Cellule getCellule(int x, int y) {
         return cellules[x][y];
     }
+    public void lancer_de_dés(Joueur j ){
+        Random r = new Random();
+        int low = 1;
+        int high = 6;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
+        int i = r.nextInt(high-low) + low;
+        JLabel label ; 
+
+        switch(i){
+            case 1 : j.recoitclé("feu"); label = new JLabel("Vous avez obtenu une clé du feu ", JLabel.CENTER);break; 
+            case 2 : j.recoitclé("eau");label = new JLabel("Vous avez obtenu une clé de l'eau ", JLabel.CENTER);break;
+            case 3 : j.recoitclé("air");label = new JLabel("Vous avez obtenu une clé de l'air ", JLabel.CENTER);break; 
+            case 4 : j.recoitclé("terre");label = new JLabel("Vous avez obtenu une clé de la terre ", JLabel.CENTER);break;
+            default : label = new JLabel("Vous n'avez rien obtenu", JLabel.CENTER);break; 
+        }; 
+        JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
+
+    }
 
 }
 
@@ -212,15 +264,52 @@ class Joueur {
     private CModele modele; 
     private final int id ; 
     protected boolean EnVie; 
+    private ArrayList<String> clés ; 
+    private ArrayList<String> artefacts ; 
 
     public Joueur (CModele modele,int id){
         this.modele =modele; 
         this.id= id; 
         this.EnVie=true; 
+        this.clés= new ArrayList<String>(); 
+        this.artefacts=new ArrayList<String>(); 
     }
     public int getidjoueur(){
         return this.id; 
     } 
+    public ArrayList<String> getclés(){
+        return this.clés ; 
+    }
+    public void recoitclé(String clé ){
+        this.clés.add(clé); 
+    }
+    public void enleveclé(String clé){
+        this.clés.remove(clé); 
+    }
+    public boolean possedeclé(String clé){
+        for(int i=0;i<this.clés.size();i++){
+            if (this.clés.get(i)==clé){
+                return true ; 
+            }
+        }return false ; 
+    }
+    public boolean possedeartefacts(String artefact){
+        for(int i=0;i<this.artefacts.size();i++){
+            if (this.artefacts.get(i)==artefact){
+                return true ; 
+            }
+        }return false ; 
+    }
+    public ArrayList<String> getartefacts(){
+        return this.artefacts  ; 
+    }
+    public void recoiteartefact(String artefact ){
+            this.artefacts.add(artefact);
+    }
+    public void enleveartefact(String artefact){
+        this.artefacts.remove(artefact); 
+    }
+
 }
 
 class Cellule {
@@ -385,6 +474,7 @@ class VueCommandes extends JPanel {
     public static JButton boutonDroite ;
     public static JButton boutonBas ;
     public static JButton boutonSeche ;
+    public static JButton boutonRecup; 
 
     public VueCommandes(CModele modele) {
         this.modele = modele;
@@ -412,12 +502,20 @@ class VueCommandes extends JPanel {
         this.add(boutonSeche); 
         this.boutonSeche= boutonSeche; 
 
+        JButton boutonRecup = new JButton("Recuperer artefact");
+        this.add(boutonRecup); 
+        this.boutonRecup= boutonRecup ; 
+
+
+
+
         Controleur ctrl = new Controleur(modele);
         Controleur haut= new Controleur(modele);
         Controleur Bas= new Controleur(modele);
         Controleur Droite= new Controleur(modele);
         Controleur Gauche= new Controleur(modele);
         Controleur Seche= new Controleur(modele);
+        Controleur Recup= new Controleur(modele);
 
         boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
@@ -425,7 +523,7 @@ class VueCommandes extends JPanel {
         boutonDroite.addActionListener(Droite);
         boutonGauche.addActionListener(Gauche);
         boutonSeche.addActionListener(Seche);
-
+        boutonRecup.addActionListener(Recup);
     }
 }
 
@@ -441,30 +539,37 @@ class Controleur implements ActionListener {
         JButton actionSource = (JButton) e.getSource(); 
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
+            modele.lancer_de_dés(j);
             modele.Joueursuivant(j);
             cpt=0;
     }
         if (cpt>2){
+            JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
+            JFrame frame = new JFrame("Erreur");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
             return ; 
         }
+        else if (actionSource.equals(VueCommandes.boutonRecup)){
+            try { modele.recupereartefact(j, modele.emplacementjoueur(j));} catch (IllegalStateException C){ return ; }
+            cpt+=1; 
+        }
         else if ( actionSource.equals(VueCommandes.boutonHaut)) {   // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
-            modele.tour("z",j);
+            try {modele.tour("z",j);}catch(IllegalStateException c){return ; }
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonGauche)) {
-            modele.tour("q",j);
+            try {modele.tour("q",j);}catch(IllegalStateException c){return ; }
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonBas)) {
-            modele.tour("s",j);
+            try {modele.tour("s",j);}catch(IllegalStateException c){return ; }
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonDroite)) {
-            modele.tour("d",j);
+            try {modele.tour("d",j);}catch(IllegalStateException c){return ; }
             cpt+=1; 
     }
         else if ( actionSource.equals(VueCommandes.boutonSeche)) {
-            modele.seche(j);
+            try {modele.seche(j);}catch(IllegalStateException c){return ; } 
             cpt+=1; 
 }
     
