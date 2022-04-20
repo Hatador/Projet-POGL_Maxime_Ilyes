@@ -200,19 +200,19 @@ class CModele extends Observable {
     public void recupereartefact(Joueur J, Cellule C){
         JLabel label= new JLabel("?"); 
         switch (C.etat) {
-            case 4 : if (J.possedeclé("eau")){J.recoiteartefact("eau");}else {
+            case 4 : if (J.possedecle("eau")){J.recoiteartefact("eau");}else {
                 label = new JLabel("Clé manquante (eau) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possedeclé("terre")){J.recoiteartefact("terre");}else {
+            case 5 :  if (J.possedecle("terre")){J.recoiteartefact("terre");}else {
                 label = new JLabel("Clé manquante (terre) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possedeclé("air")){J.recoiteartefact("air");}else {
+            case 6 : if (J.possedecle("air")){J.recoiteartefact("air");}else {
                 label = new JLabel("Clé manquante (air) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possedeclé("feu")){J.recoiteartefact("feu");} else {
+            case 7 : if (J.possedecle("feu")){J.recoiteartefact("feu");} else {
                 label = new JLabel("Clé manquante (feu) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
@@ -239,7 +239,7 @@ class CModele extends Observable {
     public Cellule getCellule(int x, int y) {
         return cellules[x][y];
     }
-    public void lancer_de_dés(Joueur j ){
+    public void lancer_de_des(Joueur j ){
         Random r = new Random();
         int low = 1;
         int high = 6;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
@@ -247,10 +247,10 @@ class CModele extends Observable {
         JLabel label ; 
 
         switch(i){
-            case 1 : j.recoitclé("feu"); label = new JLabel("Vous avez obtenu une clé du feu ", JLabel.CENTER);break; 
-            case 2 : j.recoitclé("eau");label = new JLabel("Vous avez obtenu une clé de l'eau ", JLabel.CENTER);break;
-            case 3 : j.recoitclé("air");label = new JLabel("Vous avez obtenu une clé de l'air ", JLabel.CENTER);break; 
-            case 4 : j.recoitclé("terre");label = new JLabel("Vous avez obtenu une clé de la terre ", JLabel.CENTER);break;
+            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clé du feu ", JLabel.CENTER);break; 
+            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clé de l'eau ", JLabel.CENTER);break;
+            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clé de l'air ", JLabel.CENTER);break; 
+            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clé de la terre ", JLabel.CENTER);break;
             default : label = new JLabel("Vous n'avez rien obtenu", JLabel.CENTER);break; 
         }; 
         JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
@@ -264,31 +264,31 @@ class Joueur {
     private CModele modele; 
     private final int id ; 
     protected boolean EnVie; 
-    private ArrayList<String> clés ; 
+    private ArrayList<String> cles ; 
     private ArrayList<String> artefacts ; 
 
     public Joueur (CModele modele,int id){
         this.modele =modele; 
         this.id= id; 
         this.EnVie=true; 
-        this.clés= new ArrayList<String>(); 
+        this.cles= new ArrayList<String>(); 
         this.artefacts=new ArrayList<String>(); 
     }
     public int getidjoueur(){
         return this.id; 
     } 
-    public ArrayList<String> getclés(){
-        return this.clés ; 
+    public ArrayList<String> getcles(){
+        return this.cles ; 
     }
-    public void recoitclé(String clé ){
-        this.clés.add(clé); 
+    public void recoitcle(String cle ){
+        this.cles.add(cle); 
     }
-    public void enleveclé(String clé){
-        this.clés.remove(clé); 
+    public void enlevecle(String cle){
+        this.cles.remove(cle); 
     }
-    public boolean possedeclé(String clé){
-        for(int i=0;i<this.clés.size();i++){
-            if (this.clés.get(i)==clé){
+    public boolean possedecle(String cle){
+        for(int i=0;i<this.cles.size();i++){
+            if (this.cles.get(i)==cle){
                 return true ; 
             }
         }return false ; 
@@ -539,7 +539,7 @@ class Controleur implements ActionListener {
         JButton actionSource = (JButton) e.getSource(); 
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
-            modele.lancer_de_dés(j);
+            modele.lancer_de_des(j);
             modele.Joueursuivant(j);
             cpt=0;
     }
