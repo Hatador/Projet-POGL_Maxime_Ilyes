@@ -476,6 +476,9 @@ class VueCommandes extends JPanel {
     public static JButton boutonSeche ;
     public static JButton boutonRecup; 
 
+    public static JButton actionsRestantes; 
+    public static JButton tourdujoueur; 
+
     public VueCommandes(CModele modele) {
         this.modele = modele;
 
@@ -506,6 +509,14 @@ class VueCommandes extends JPanel {
         this.add(boutonRecup); 
         this.boutonRecup= boutonRecup ; 
 
+        JButton actionsRestantes = new JButton("Actions Restantes : 3");
+        this.add(actionsRestantes); 
+        this.actionsRestantes= actionsRestantes ; 
+
+        JButton tourdujoueur = new JButton("C'est le tour du joueur 1");
+        this.add(tourdujoueur); 
+        this.tourdujoueur= tourdujoueur ; 
+
 
 
 
@@ -517,6 +528,9 @@ class VueCommandes extends JPanel {
         Controleur Seche= new Controleur(modele);
         Controleur Recup= new Controleur(modele);
 
+        Controleur AR= new Controleur(modele);
+        Controleur TJ= new Controleur(modele);
+
         boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
         boutonBas.addActionListener(Bas);
@@ -524,53 +538,73 @@ class VueCommandes extends JPanel {
         boutonGauche.addActionListener(Gauche);
         boutonSeche.addActionListener(Seche);
         boutonRecup.addActionListener(Recup);
+
+        actionsRestantes.addActionListener(AR);
+        tourdujoueur.addActionListener(TJ);
     }
 }
 
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int numjoueur = 1;
+    
 
     public Controleur(CModele modele) { this.modele = modele; }
 
     public void actionPerformed(ActionEvent e) {
+        
+
         Joueur j =modele.Joueuractuel; 
         JButton actionSource = (JButton) e.getSource(); 
+        
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=0;
+            cpt=3;
+            numjoueur++;
+            if (numjoueur>4){numjoueur=1;}
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            VueCommandes.tourdujoueur.setText("C'est le tour du joueur " + numjoueur);
     }
-        if (cpt>2){
+        if (cpt<1){
             JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
             JFrame frame = new JFrame("Erreur");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
             return ; 
         }
         else if (actionSource.equals(VueCommandes.boutonRecup)){
             try { modele.recupereartefact(j, modele.emplacementjoueur(j));} catch (IllegalStateException C){ return ; }
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
         }
-        else if ( actionSource.equals(VueCommandes.boutonHaut)) {   // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
+        else if ( actionSource.equals(VueCommandes.boutonHaut)) {
+            // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
             try {modele.tour("z",j);}catch(IllegalStateException c){return ; }
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
     }
         else if ( actionSource.equals(VueCommandes.boutonGauche)) {
             try {modele.tour("q",j);}catch(IllegalStateException c){return ; }
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
     }
         else if ( actionSource.equals(VueCommandes.boutonBas)) {
             try {modele.tour("s",j);}catch(IllegalStateException c){return ; }
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
     }
         else if ( actionSource.equals(VueCommandes.boutonDroite)) {
             try {modele.tour("d",j);}catch(IllegalStateException c){return ; }
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
     }
         else if ( actionSource.equals(VueCommandes.boutonSeche)) {
             try {modele.seche(j);}catch(IllegalStateException c){return ; } 
-            cpt+=1; 
+            cpt-=1; 
+            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
 }
     
 }
