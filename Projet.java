@@ -257,6 +257,8 @@ class CModele extends Observable {
 
     }
 
+
+
 }
 
 class Joueur {
@@ -477,7 +479,9 @@ class VueCommandes extends JPanel {
     public static JButton boutonRecup; 
 
     public static JButton actionsRestantes; 
+
     public static JButton tourdujoueur; 
+    public static JButton inventaire; 
 
     public VueCommandes(CModele modele) {
         this.modele = modele;
@@ -517,6 +521,10 @@ class VueCommandes extends JPanel {
         this.add(tourdujoueur); 
         this.tourdujoueur= tourdujoueur ; 
 
+        JButton inventaire = new JButton("Clefs : [] Artefacts : []");
+        this.add(inventaire); 
+        this.inventaire= inventaire ; 
+
 
 
 
@@ -530,6 +538,7 @@ class VueCommandes extends JPanel {
 
         Controleur AR= new Controleur(modele);
         Controleur TJ= new Controleur(modele);
+        Controleur inv= new Controleur(modele);
 
         boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
@@ -541,6 +550,7 @@ class VueCommandes extends JPanel {
 
         actionsRestantes.addActionListener(AR);
         tourdujoueur.addActionListener(TJ);
+        inventaire.addActionListener(inv);
     }
 }
 
@@ -565,9 +575,11 @@ class Controleur implements ActionListener {
             modele.Joueursuivant(j);
             cpt=3;
             numjoueur++;
+            
             if (numjoueur>4){numjoueur=1;}
             VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
             VueCommandes.tourdujoueur.setText("C'est le tour du joueur " + numjoueur);
+            VueCommandes.inventaire.setText("Clefs : " + modele.Joueuractuel.getcles() + "Artefacts : " + modele.Joueuractuel.getartefacts());
     }
         if (cpt<1){
             JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
