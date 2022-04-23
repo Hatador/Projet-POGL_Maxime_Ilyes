@@ -39,7 +39,7 @@ avancement 22/4
 10.3 en cours
 
 1) fait
-2) en cours
+2) fait
 3) en cours
 +) pas fait
 
