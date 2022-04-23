@@ -223,17 +223,7 @@ class CModele extends Observable {
     }
 
 
-    protected int compteVoisines(int x, int y) {
-    int res=0;
 
-    for(int i=x-1; i<=x+1; i++) {
-        for(int j=y-1; j<=y+1; j++) {
-            if (cellules[i][j].etat == 1) { res++; }
-        }
-    }
-    return (res - ((cellules[x][y].etat)));
-
-    }
 
 
     public Cellule getCellule(int x, int y) {
@@ -259,6 +249,46 @@ class CModele extends Observable {
 
 
 
+    public Cellule emplacementHelico(){
+        for(int i=0; i<LARGEUR+2; i++) {
+            for(int j=0; j<HAUTEUR+2; j++) {
+                if (cellules[i][j].etat == 3){
+                    Cellule C= cellules[i][j] ;
+                    return C ;   
+                }
+            }
+        }
+        return null;
+
+}
+
+    public boolean conditionDefaite(){
+        
+        Cellule c = emplacementHelico(); 
+        Cellule c1 = cellules[c.coordx()][c.coordy()-1];
+        Cellule c2 = cellules[c.coordx()-1][c.coordy()];
+        Cellule c3 = cellules[c.coordx()][c.coordy()+1];
+        Cellule c4 = cellules[c.coordx()+1][c.coordy()];
+
+        if (c1.etat == 2 || c2.etat == 2 || c3.etat == 2 || c4.etat == 2){     
+            return true;     
+        }
+        return false;
+    }
+
+    public boolean conditionVictoire(){
+        
+        Cellule c = emplacementHelico(); 
+        Cellule c1 = cellules[c.coordx()][c.coordy()-1];
+        Cellule c2 = cellules[c.coordx()-1][c.coordy()];
+        Cellule c3 = cellules[c.coordx()][c.coordy()+1];
+        Cellule c4 = cellules[c.coordx()+1][c.coordy()];
+
+        if (c1.getjoueur() != null && c2.getjoueur() != null && c3.getjoueur() != null && c4.getjoueur() != null){     
+            return true;     
+        }
+        return false;
+    }
 }
 
 class Joueur {
@@ -328,17 +358,8 @@ class Cellule {
         this.x = x; this.y = y;
     }
 
-    private int prochainEtat;
-    protected void evalue() {
-        switch (this.modele.compteVoisines(x, y)) {
-            case 2: prochainEtat=etat; break;
-            case 3: prochainEtat=1; break;
-            default: prochainEtat=0;
-        }
-    }
-    protected void evolue() {
-        etat = prochainEtat;
-    }
+
+
 
     public int estVivante() {
         return etat;
@@ -568,6 +589,8 @@ class Controleur implements ActionListener {
     public Controleur(CModele modele) { this.modele = modele; }
 
     public void actionPerformed(ActionEvent e) {
+
+        //modele.conditionDefaite();
         
 
         Joueur j =modele.Joueuractuel; 
@@ -628,6 +651,41 @@ class Controleur implements ActionListener {
             cpt-=1; 
             VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
 }
+        if(modele.conditionDefaite()){
+            VueCommandes.inventaire.setText("PARTIE PERDUE");
+            VueCommandes.boutonAvance.setText("PARTIE PERDUE");
+            VueCommandes.boutonAvance.setEnabled(false);
+            VueCommandes.boutonHaut.setEnabled(false);
+            VueCommandes.boutonDroite.setEnabled(false);
+            VueCommandes.boutonGauche.setEnabled(false);
+            VueCommandes.boutonBas.setEnabled(false);
+            VueCommandes.boutonSeche.setEnabled(false);
+            VueCommandes.boutonRecup.setEnabled(false);
+            VueCommandes.actionsRestantes.setEnabled(false);
+            VueCommandes.tourdujoueur.setEnabled(false);
+            VueCommandes.inventaire.setEnabled(false);
+    }
+    if(modele.conditionVictoire()){
+        VueCommandes.inventaire.setText("PARTIE GAGNE !!!!!!!!!!!!!!!!");
+        VueCommandes.boutonAvance.setText("PARTIE GAGNE !!!!!!!!!!!!!!!!");
+        VueCommandes.boutonAvance.setEnabled(false);
+        VueCommandes.boutonHaut.setEnabled(false);
+        VueCommandes.boutonDroite.setEnabled(false);
+        VueCommandes.boutonGauche.setEnabled(false);
+        VueCommandes.boutonBas.setEnabled(false);
+        VueCommandes.boutonSeche.setEnabled(false);
+        VueCommandes.boutonRecup.setEnabled(false);
+        VueCommandes.actionsRestantes.setEnabled(false);
+        VueCommandes.tourdujoueur.setEnabled(false);
+        VueCommandes.inventaire.setEnabled(false);
+}
+        
+
+    
+
+
+
+
     
 }
 }
