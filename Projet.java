@@ -521,7 +521,11 @@ class VueCommandes extends JPanel {
         this.add(tourdujoueur); 
         this.tourdujoueur= tourdujoueur ; 
 
-        JButton inventaire = new JButton("Clefs : [] Artefacts : []");
+        JButton inventaire = new JButton("<html>" + "Listes des objets :<br/> "+
+        "JOUEUR1 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
+        "JOUEUR2 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
+        "JOUEUR3 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
+        "JOUEUR4 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]" +"<html>");
         this.add(inventaire); 
         this.inventaire= inventaire ; 
 
@@ -568,6 +572,12 @@ class Controleur implements ActionListener {
 
         Joueur j =modele.Joueuractuel; 
         JButton actionSource = (JButton) e.getSource(); 
+        VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
+         "JOUEUR1 : <br/>" + "Clefs : " + modele.Tjoueurs.get(0).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
+         "JOUEUR2 : <br/>" + "Clefs : " + modele.Tjoueurs.get(1).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
+         "JOUEUR3 : <br/>" + "Clefs : " + modele.Tjoueurs.get(2).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
+         "JOUEUR4 : <br/>" + "Clefs : " + modele.Tjoueurs.get(3).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts() +
+         "</html>");
         
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
@@ -579,7 +589,7 @@ class Controleur implements ActionListener {
             if (numjoueur>4){numjoueur=1;}
             VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
             VueCommandes.tourdujoueur.setText("C'est le tour du joueur " + numjoueur);
-            VueCommandes.inventaire.setText("Clefs : " + modele.Joueuractuel.getcles() + "Artefacts : " + modele.Joueuractuel.getartefacts());
+            //VueCommandes.inventaire.setText("Clefs : " + modele.Joueuractuel.getcles() + "Artefacts : " + modele.Joueuractuel.getartefacts());
     }
         if (cpt<1){
             JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
