@@ -18,7 +18,7 @@ test de méthodes
 documentation; description des parametres, description des retours, courtes desc de la fonction
 
 ////
-avancement 20/4
+avancement 22/4
 
 10.1 fait
 
@@ -27,20 +27,20 @@ avancement 20/4
 3) fait
 +) fait
 
-10.2 en cours
+10.2 fait
 
 1) fait
 2) fait
 3) fait
 4) fait
 5) fait
-+) en cours
++) fait
 
-10.3 pas fait
+10.3 en cours
 
-1) en cours
-2) pas fait
-3) pas fait
+1) fait
+2) en cours
+3) en cours
 +) pas fait
 
 10.4: échange de clé) pas fait
