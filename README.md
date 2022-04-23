@@ -36,17 +36,18 @@ avancement 22/4
 5) fait
 +) fait
 
-10.3 en cours
+10.3 fait
 
 1) fait
 2) fait
-3) en cours
-+) pas fait
+3) fait
++) fait
 
 10.4: échange de clé) pas fait
 
 methodes toString()?
 amelioration graphique?
+correction bug?
 
 ////
 fin
