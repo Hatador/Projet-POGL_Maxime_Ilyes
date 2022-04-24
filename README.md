@@ -31,10 +31,10 @@ voir fichier .java
 - dzqd
 - 
 -
-* Actions :
-1) Boutons directionnels "haut/bas/gauche/droite"
-2) Bouton "fin de tour" qui fait passer au prochain joueur, inonde 3 cases au hasard et a une chance de donner une clé
-3) Bouton "sèche" qui assèche la case sur laquelle le joueur se trouve et les 4 cases adjacentes
-4) Bouton "récupérer artefact" qui récupère un artefact si le joueur se trouve sur la même case et qu'il a 2 clés du bon type
-5) Bouton "chercher clé" qui peut donner une clé aléatoire, inonder 3 cases au hasard ou ne rien faire
-6) Boutons de dons de clés "air/terre/feu/eau" qui transfère la clé choisie au joueur adjacent si strictement 2 joueurs sont adjacents
+* Actions : <br/>
+Boutons directionnels "haut/bas/gauche/droite" <br/>
+Bouton "fin de tour" qui fait passer au prochain joueur, inonde 3 cases au hasard et a une chance de donner une clé <br/>
+Bouton "sèche" qui assèche la case sur laquelle le joueur se trouve et les 4 cases adjacentes <br/>
+Bouton "récupérer artefact" qui récupère un artefact si le joueur se trouve sur la même case et qu'il a 2 clés du bon type <br/>
+Bouton "chercher clé" qui peut donner une clé aléatoire, inonder 3 cases au hasard ou ne rien faire <br/>
+Boutons de dons de clés "air/terre/feu/eau" qui transfère la clé choisie au joueur adjacent si strictement 2 joueurs sont adjacents <br/>
