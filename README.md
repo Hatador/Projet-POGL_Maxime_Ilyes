@@ -10,7 +10,7 @@ Ilyes Tebourski, Maxime Parizot
 10.4 : échange de clé
 
 * Choix d'architecture : <br/>
-
+(à compléter)
 
 * Problèmes toujours présents : <br/>
 x <br/>
