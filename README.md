@@ -13,10 +13,10 @@ Ilyes Tebourski, Maxime Parizot
 
 
 * Problèmes toujours présents : <br/>
-
+x <br/>
 
 * Instruction de lancement : <br/>
-
+x <br/>
 
 * Diagramme de classe : <br/>
 voir fichier .pdf
