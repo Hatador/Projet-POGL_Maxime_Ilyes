@@ -199,12 +199,8 @@ class CModele extends Observable {
         if (c4.etat == 1){c4.etat = 0;}
         if (c.etat == 1){c.etat = 0;}
 
-        
-
         notifyObservers();
     }
-
-    
 
     public void Joueursuivant(Joueur j ){
         int i =0; 
@@ -220,13 +216,13 @@ class CModele extends Observable {
     }
     public void recupereartefact(Joueur J, Cellule C){
         switch (C.etat) {
-            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");}else {
-            this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");}else {
+            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obetnu l'artefact de l'eau");}
+            else {this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
+            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obetnu l'artefact de la terre");}else {
                 this.message.setText("Clé manquante (terre) ");throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");}else {
+            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obetnu l'artefact de l'air");}else {
                 this.message.setText("Clé manquante (air) ");throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");} else {
+            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obetnu l'artefact du feu");} else {
                 this.message.setText("Clé manquante (feu) ");throw new IllegalStateException("C"); }; break ;
             default : this.message.setText("Aucun artefact ici");  throw new IllegalStateException("C"); 
         };               
@@ -268,9 +264,6 @@ class CModele extends Observable {
     }
 
 
-
-
-
     public Cellule emplacementHelico(){
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
@@ -296,7 +289,6 @@ class CModele extends Observable {
 
     }
 }
-
     public boolean conditionDefaite(Joueur J){
         
         Cellule c = emplacementHelico(); 
@@ -320,9 +312,6 @@ class CModele extends Observable {
             couleurbords(8);  
             return true;     
         }
-
-
-
 
         return false;
     }
@@ -437,12 +426,7 @@ class Joueur {
                         if (this.cles.get(j)==cle){
                             return true ; 
                         }
-
-                        
-
                 }
-                
-
                 }
                 
             }
@@ -721,6 +705,11 @@ class VueCommandes extends JPanel {
         Actions.add(boutonchercherCle); 
         this.boutonchercherCle= boutonchercherCle ; 
 
+        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
+        Actions.add(actionsRestantes); 
+        this.actionsRestantes= actionsRestantes ; 
+
+
         JButton donneTerre = new JButton("Donner clef terre");
         Actions.add(donneTerre);
         this.donneTerre= donneTerre; 
@@ -737,10 +726,6 @@ class VueCommandes extends JPanel {
         Actions.add(donneEau);
         this.donneEau= donneEau; 
 
-        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
-        Actions.add(actionsRestantes); 
-        this.actionsRestantes= actionsRestantes ; 
-
         this.add(Actions);   // et on ajoute les actions a l'interface 
 
 
@@ -754,9 +739,9 @@ class VueCommandes extends JPanel {
 
 
         JLabel inventaire = new JLabel("<html>" + "Listes des objets :<br/> "+
-        "JOUEUR1 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
-        "JOUEUR2 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
-        "JOUEUR3 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
+        "JOUEUR1 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" +"<br/>"+
+        "JOUEUR2 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" +"<br/>" +
+        "JOUEUR3 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" +"<br/>" +
         "JOUEUR4 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]" +"<html>");
         Info.add(inventaire,BorderLayout.CENTER); 
         this.inventaire= inventaire ; 
@@ -890,9 +875,9 @@ class Controleur implements ActionListener {
         }
 
         VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
-            "JOUEUR1 : " + "Clefs : " + modele.Tjoueurs.get(0).getcles() + "  Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +
-            "JOUEUR2 : " + "Clefs : " + modele.Tjoueurs.get(1).getcles() + "  Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +
-            "JOUEUR3 : " + "Clefs : " + modele.Tjoueurs.get(2).getcles() + "  Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +
+            "JOUEUR1 : " + "Clefs : " + modele.Tjoueurs.get(0).getcles() + "  Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +"<br/>" +
+            "JOUEUR2 : " + "Clefs : " + modele.Tjoueurs.get(1).getcles() + "  Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +"<br/>" +
+            "JOUEUR3 : " + "Clefs : " + modele.Tjoueurs.get(2).getcles() + "  Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +"<br/>" +
             "JOUEUR4 : " + "Clefs : " + modele.Tjoueurs.get(3).getcles() + "  Artefacts : " + modele.Tjoueurs.get(3).getartefacts() +
             "</html>");
     VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
@@ -915,10 +900,20 @@ class Controleur implements ActionListener {
             VueCommandes.donneFeu.setEnabled(false);
             VueCommandes.donneTerre.setEnabled(false);
             VueCommandes.donneAir.setEnabled(false);
+  
+            JPanel loose= new JPanel();                                        
+            JLabel a= new JLabel("VOUS AVEZ PERDU");      
+            a.setFont(new Font(" Serif",Font.BOLD,20));
+            a.setBounds(50,20,100,40);
+            a.setForeground(Color.RED);
+            loose.add(a);
+            modele.msge=loose;  
+
+
+
     }
     if(modele.conditionVictoire()){
-        VueCommandes.inventaire.setText("PARTIE GAGNE !!!!!!!!!!!!!!!!");
-        VueCommandes.boutonAvance.setText("PARTIE GAGNE !!!!!!!!!!!!!!!!");
+        VueCommandes.boutonAvance.setText("PARTIE GAGNE !!!!!");
         VueCommandes.boutonAvance.setEnabled(false);
         VueCommandes.boutonHaut.setEnabled(false);
         VueCommandes.boutonDroite.setEnabled(false);
@@ -934,16 +929,17 @@ class Controleur implements ActionListener {
         VueCommandes.donneFeu.setEnabled(false);
         VueCommandes.donneTerre.setEnabled(false);
         VueCommandes.donneAir.setEnabled(false);
+        modele.message.setText("PARTIE GAGNE !");
+
+
+        JPanel win= new JPanel();                                        
+        JLabel a= new JLabel("VOUS AVEZ GAGNE");      
+        a.setFont(new Font(" Serif",Font.BOLD,20));
+        a.setBounds(50,20,100,40);
+        a.setForeground(Color.GREEN);
+        win.add(a);
+        modele.msge=win;  
 }
-    
-        
 
-    
-
-
-
-
-    
 }
 }
-
