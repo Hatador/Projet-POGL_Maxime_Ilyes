@@ -38,6 +38,7 @@ Bouton "chercher clé" qui peut donner une clé aléatoire, inonder 3 cases au h
 Boutons de dons de clés "air/terre/feu/eau" qui transfère la clé choisie au joueur adjacent si strictement 2 joueurs sont côte à côte <br/>
 
 * Choix d'architecture : <br/>
+
 Dans un premier temps, nous avons étudié le code qui nous avait été donné en TP pour nous aider à construire la base de notre interface graphique qui est donc inspiré du fichier Conway. <br/>
 
 Au début, nous n'avions donc qu'une grille et un bouton, nous avons choisi une grille plutôt grande avec des cases plutôt petites pour que notre jeu corresponde 
