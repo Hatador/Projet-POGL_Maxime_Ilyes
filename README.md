@@ -21,16 +21,13 @@ Ilyes Tebourski, Maxime Parizot
 * Diagramme de classe : <br/>
 voir fichier .pdf
 
-* Tests de méthodes : <br/>
-
-
 * Documentation : <br/>
 voir fichier .java
 
 * Règles : <br/>
 Une partie se joue à 4 joueurs en coopération <br/>
 Chaque joueur peut effectuer 5 actions par tour <br/>
-La partie est remportée quand les 4 joueurs se mettent sur les 4 cases adjacentes à l'hélicoptère (case grise) et que tous les artefacts ont été récupérés <br/>
+La partie est remportée quand les 4 joueurs se trouvent sur les 4 cases adjacentes à l'hélicoptère (case grise) et que tous les artefacts ont été récupérés <br/>
 La partie est perdue quand les 4 cases adjacentes à n'importe quel joueur sont submergées ou que l'une des cases adjacentes à l'hélicoptère est submergée <br/>
 La position de chaque artefact et de l'hélicoptère est aléatoire <br/>
 L'artefact de feu est orange, de l'air est rose, de la terre est marron et de l'eau est cyan
