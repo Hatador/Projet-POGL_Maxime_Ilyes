@@ -43,11 +43,10 @@ avancement 22/4
 3) fait
 +) fait
 
-10.4: échange de clé) pas fait
+10.4: échange de clé) fait
 
-methodes toString()?
-amelioration graphique?
-correction bug?
+amelioration graphique? en cours
+correction bug? ok
 
 ////
 fin
