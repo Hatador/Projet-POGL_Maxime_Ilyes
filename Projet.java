@@ -1,17 +1,15 @@
 //Projet
 
 import java.util.*;
-import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.ProcessHandle.Info;
-
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicSliderUI.ActionScroller;
+
 
 interface Observer {
 
     public void update();
+
 }
 
 abstract class Observable {
@@ -23,7 +21,6 @@ abstract class Observable {
     public void addObserver(Observer o) {
         observers.add(o);
     }
-
     public void notifyObservers() {
         for(Observer o : observers) {
             o.update();
@@ -43,19 +40,19 @@ public class Projet {
     }
 }
 
-class CModele extends Observable {
+class CModele extends Observable {      
 
-    public static final int HAUTEUR=40, LARGEUR=40;
+    public static final int HAUTEUR=40, LARGEUR=40;     // on choisit ici la taille de la grille 
 
-    private Cellule[][] cellules;
-    public  ArrayList<Joueur> Tjoueurs ; 
+    private Cellule[][] cellules; // contient toutes les cellules 
+    public  ArrayList<Joueur> Tjoueurs ; // tableau contenant tout les joueurs 
     public Joueur Joueuractuel ; 
     public JPanel msge; 
-    public JLabel message; 
+    public JLabel message; // message afficher variable (en haut a gauche)
 
-    public CModele() {
+    public CModele() {   // constructeur du modele 
 
-        cellules = new Cellule[LARGEUR+2][HAUTEUR+2];
+        cellules = new Cellule[LARGEUR+2][HAUTEUR+2];       
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
                 cellules[i][j] = new Cellule(this,i, j, null);
@@ -88,10 +85,9 @@ class CModele extends Observable {
         Joueur J4 = new Joueur(this, 4); 
         this.Tjoueurs.add(J4);
         
-        this.Joueuractuel=J1; 
-
+        this.Joueuractuel=J1; // On commmence par le joueur 1 
         for(int i=2;i<=5;i++){
-            cellules[i][i].j=Tjoueurs.get(i-2); 
+            cellules[i][i].j=Tjoueurs.get(i-2);    // on place les jouuers en diagonale dans le coin en haut a gauche 
         }
 
         // placement de l'helico + artefacts 
@@ -101,9 +97,9 @@ class CModele extends Observable {
         for (int k=3;k<=7;k++){
             int i = r.nextInt(high-low) + low;
             int j = r.nextInt(high-low) + low;
-            while (cellules[i][j].etat >1 && cellules[i][j].j == null  ){      // on  verifie que la case tiré soit valide sinon on en tire une autre 
-            i = r.nextInt(high-low) + low;
-            j = r.nextInt(high-low) + low;
+            while (cellules[i][j].etat >1 && cellules[i][j].j != null  ){    // on  verifie que la case tiré soit valide sinon on en tire une autre 
+                i = r.nextInt(high-low) + low;
+                j = r.nextInt(high-low) + low;
             }
 
             cellules[i][j].etat = k ;
@@ -117,39 +113,34 @@ class CModele extends Observable {
         msg.setFont(new Font(" Serif",Font.BOLD,20));
         msg.setBounds(50,20,100,40);
         msge.add(msg); 
-        message = new JLabel ("Prenez garde cette ile semble pour le moins ... instable "); 
+        message = new JLabel ("Prenez Garde cet ile semble pour le moins ... instable "); 
         message.setForeground(Color.RED);
         msge.add(message); 
         
     }
 
-    public CModele(ArrayList<Joueur> tjoueurs) {
-        Tjoueurs = tjoueurs;
-    }
-
     public void avance() { 
         Random r = new Random();
         int low = 1;
-        int high = LARGEUR;
+        int high = LARGEUR-1;
 
-        for(int k=1; k <= 3; k++){
+        for(int k=1; k <= 3; k++){          // on tire une cellule au hasard 
             int i = r.nextInt(high-low) + low;
             int j = r.nextInt(high-low) + low;
             while (cellules[i][j].etat >1){          // ici aussi on  verifie que la case tiré soit valide sinon on en tire une autre 
-            i = r.nextInt(high-low) + low;
-            j = r.nextInt(high-low) + low;
-            }
+                i = r.nextInt(high-low) + low;
+                j = r.nextInt(high-low) + low;
+             }
             if (cellules[i][j].etat == 0) {
                  cellules[i][j].etat = 1; }
 
             else if (cellules[i][j].etat == 1) {
-                 cellules[i][j].etat = 2; }        
+                 cellules[i][j].etat = 2; }
 
-        }
-
+            }        
         notifyObservers();
     }
-    public Cellule emplacementjoueur(Joueur J){
+    public Cellule emplacementjoueur(Joueur J){    // on parcourt la grille et on renvoit la cellule ou se trouve le joueur J
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
                 if (cellules[i][j].contientjoueur(J)){
@@ -160,7 +151,7 @@ class CModele extends Observable {
         }
         return null;
     }
-    public void tour(String a,Joueur J){
+    public void tour(String a,Joueur J){               // on deplace le joueur J sur une des 4 directions dans une case libre
         Cellule c = emplacementjoueur(J); 
         Cellule c1 = switch (a) {
             case "z" -> cellules[c.coordx()][c.coordy()-1];
@@ -169,19 +160,19 @@ class CModele extends Observable {
             case "d" -> cellules[c.coordx()+1][c.coordy()];
             default -> throw new IllegalStateException("Invalid mouvement");
         };
-        if (c1.etat != 2 && c1.etat != 3 && c1.getjoueur() == null){
+        if (c1.etat != 2 && c1.etat != 3 && c1.getjoueur() == null){   
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
         this.message.setText("Case bloque");
-        throw new IllegalStateException("Case bloquee "); 
+        throw new IllegalStateException("Case bloquee ");  // si la case n'est pas valide on leve une erreur 
     }
        notifyObservers();
     }
 
     public void seche(Joueur J){
         
-        Cellule c = emplacementjoueur(J); 
+        Cellule c = emplacementjoueur(J);                                               // on asseche la case du jouer + les 4 cases adjacentes 
         Cellule c1 = cellules[c.coordx()][c.coordy()-1];
         Cellule c2 = cellules[c.coordx()-1][c.coordy()];
         Cellule c3 = cellules[c.coordx()][c.coordy()+1];
@@ -197,58 +188,62 @@ class CModele extends Observable {
         if (c4.etat == 1){c4.etat = 0;}
         if (c.etat == 1){c.etat = 0;}
 
-        notifyObservers();
+        notifyObservers();                                                  // on oublie pas d'informer les observateurs a chaque mosifications 
     }
 
-    public void Joueursuivant(Joueur j ){
+    public void Joueursuivant(Joueur j ){               // methode pour passer au joueur suivant 
         int i =0; 
-        while (this.Tjoueurs.get(i)!=j){
-            i++; 
+        while (this.Tjoueurs.get(i)!=j){                        // on parcourt le tableaud de joueurs pour trouver l'emplacement du joueur en argument 
+            i++;  
         }
-        if (i==this.Tjoueurs.size()-1 ){
+        if (i==this.Tjoueurs.size()-1 ){                      // si le joueurs est le dernier on repasse au premier du tableau 
             this.Joueuractuel=this.Tjoueurs.get(0); 
         }
         else{
-            this.Joueuractuel=this.Tjoueurs.get(i+1); 
+            this.Joueuractuel=this.Tjoueurs.get(i+1);          // sinon on passe au suivant 
         }
     }
+
+
+
     public void recupereartefact(Joueur J, Cellule C){
-        switch (C.etat) {
-            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obtenu l'artefact de l'eau");}
-            else {this.message.setText("Clef manquante (eau) ");throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obtenu l'artefact de la terre");}else {
-                this.message.setText("Clef manquante (terre) ");throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obtenu l'artefact de l'air");}else {
-                this.message.setText("Clef manquante (air) ");throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obtenu l'artefact du feu");} else {
-                this.message.setText("Clef manquante (feu) ");throw new IllegalStateException("C"); }; break ;
+        switch (C.etat) {   
+        //pour chaque artefact on verifie que le joueur possede bien les clés sinon on leve un erreur 
+            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obetnu l'artefact de l'eau");}
+            else {this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
+            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obetnu l'artefact de la terre");}else {
+                this.message.setText("Clé manquante (terre) ");throw new IllegalStateException("C"); }; break ;
+            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obetnu l'artefact de l'air");}else {
+                this.message.setText("Clé manquante (air) ");throw new IllegalStateException("C"); }; break ;
+            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obetnu l'artefact du feu");} else {
+                this.message.setText("Clé manquante (feu) ");throw new IllegalStateException("C"); }; break ;
             default : this.message.setText("Aucun artefact ici");  throw new IllegalStateException("C"); 
         };               
     }
 
 
-    public Cellule getCellule(int x, int y) {
+    public Cellule getCellule(int x, int y) {   //permet de retrouver une cellulles grace a sa position 
         return cellules[x][y];
     }
     public void lancer_de_des(Joueur j ){
         Random r = new Random();
         int low = 1;
         int high = 6;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
-        int i = r.nextInt(high-low) + low;
+        int i = r.nextInt(high-low) + low;  // on tire un entier unetre 1 et 6 
 
         switch(i){
             case 1 : j.recoitcle("feu"); this.message.setText("Vous avez obtenu une clef du feu ");break; 
             case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
             case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
             case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
-            default : this.message.setText("Vous n'avez rien obtenu");break; 
+            default : this.message.setText("Vous n'avez rien obtenu");break;      // et selon l'entier obtenu ou effectue l'action correspondante 
         }; 
     }
 
     public void lancer_de_des2(Joueur j ){
         Random r = new Random();
         int low = 1;
-        int high = 7;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
+        int high = 7;                   //meme principe ici que pour la premiere fonction 
         int i = r.nextInt(high-low) + low;
 
         switch(i){
@@ -256,13 +251,13 @@ class CModele extends Observable {
             case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
             case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
             case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
-            case 5 : avance();this.message.setText("Vous avez declenche une montee des eaux !");break;
+            case 5 : avance();this.message.setText("Vous avez declencher une montee des eaux !");break;
             default :this.message.setText("...Mais rien ne se passe");break; 
         }; 
     }
 
 
-    public Cellule emplacementHelico(){
+    public Cellule emplacementHelico(){           //methode qui permet de retrouver la place de l'Helico 
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
                 if (cellules[i][j].etat == 3){
@@ -274,7 +269,7 @@ class CModele extends Observable {
         return null;
 
 }
-    public void couleurbords(int c){
+    public void couleurbords(int c){       // methode permanter de coloriers les bord (pour les ercan de victoire/défaite)
         int a=1; 
         for(int i=0;i<=LARGEUR;i++){
             cellules[i][a].etat=c; 
@@ -287,7 +282,8 @@ class CModele extends Observable {
 
     }
 }
-    public boolean conditionDefaite(Joueur J){
+    public boolean conditionDefaite(Joueur J){   // methode permettant de voir si la partie est perdu 
+
         
         Cellule c = emplacementHelico(); 
         Cellule c1 = cellules[c.coordx()][c.coordy()-1];
@@ -314,7 +310,7 @@ class CModele extends Observable {
         return false;
     }
 
-    public boolean conditionVictoire(){
+    public boolean conditionVictoire(){   // methode permettant de voir si la partie est gagné 
         
         Cellule c = emplacementHelico(); 
         Cellule c1 = cellules[c.coordx()][c.coordy()-1];
@@ -334,10 +330,10 @@ class CModele extends Observable {
         return false;
     }
 
-    public void echangecle(Joueur J, String cle){
+    public void echangecle(Joueur J, String cle){    // on introduis ici l'echange de clé entre joueur 
         if(J.possedecle(cle)){
 
-
+                                                            // a condition qu'il n'y ai qu'un seul joueur dans les case adjacentes 
         Cellule j = emplacementjoueur(J); 
         Cellule j1 = cellules[j.coordx()][j.coordy()-1];
         Cellule j2 = cellules[j.coordx()-1][j.coordy()];
@@ -365,7 +361,7 @@ class CModele extends Observable {
 
         }
         else {
-            this.message.setText("mauvaise position");
+            this.message.setText("mauvaise position"); // s'il ya a plusieur joueurs ou aucun on renvoie un message d'erreur 
             throw new IllegalStateException("C"); }
 
     }
@@ -377,32 +373,28 @@ class CModele extends Observable {
 
 class Joueur {
 
-  
     private final int id ; 
-  
     private ArrayList<String> cles ; 
     private ArrayList<String> artefacts ; 
 
-    public Joueur (CModele modele,int id){
-  
+    public Joueur (CModele modele,int id){   // constructeur de la classe 
         this.id= id; 
- 
         this.cles= new ArrayList<String>(); 
         this.artefacts=new ArrayList<String>(); 
     }
-    public int getidjoueur(){
+    public int getidjoueur(){       // getters 
         return this.id; 
     } 
     public ArrayList<String> getcles(){
         return this.cles ; 
     }
-    public void recoitcle(String cle ){
+    public void recoitcle(String cle ){  // setters 
         this.cles.add(cle); 
     }
     public void enlevecle(String cle){
         this.cles.remove(cle); 
     }
-    public boolean possedecle(String cle){
+    public boolean possedecle(String cle){  // methode pour savoir si le joueur possede une clé 
         for(int i=0;i<this.cles.size();i++){
             if (this.cles.get(i)==cle){
                 return true ; 
@@ -410,7 +402,7 @@ class Joueur {
         }return false ; 
     }
 
-    public void enleve2cle(String cle){
+    public void enleve2cle(String cle){           // version améliorer des fonctions précedente pour verifier que le jour a bien 2 clés du type voulu  
         this.cles.remove(cle); 
         this.cles.remove(cle);
     }
@@ -418,16 +410,15 @@ class Joueur {
     public boolean possede2cle(String cle){
         for(int i=0;i<this.cles.size();i++){
             if (this.cles.get(i)==cle){
-                this.cles.remove(cle); 
-                for(int j=0;j<this.cles.size();j++){
-                    if (this.cles.get(j)==cle){
-                        this.cles.add(cle);
-                        return true;
-                    }
+                int k=i;
+                if(k != this.cles.size()-1){
+                    for(int j=k;j<this.cles.size();j++){
+                        if (this.cles.get(j)==cle){
+                            return true ; 
+                        }
                 }
-                this.cles.add(cle);
-
-
+                }
+                
             }
         }return false ; 
     }
@@ -440,7 +431,7 @@ class Joueur {
             }
         }return false ; 
     }
-    public ArrayList<String> getartefacts(){
+    public ArrayList<String> getartefacts(){      // encore des getters / setters
         return this.artefacts  ; 
     }
     public void recoiteartefact(String artefact ){
@@ -456,11 +447,10 @@ class Cellule {
 
     private CModele modele;
 
-    protected int etat;
-
+    protected int etat;                 /// variant entre 0 et 9 il coorespond a l'état de la case (submergé , vide, helicoptere etc......)
     private final int x, y;
     public Joueur j ; 
-    public Cellule(CModele modele, int x, int y,Joueur j ) {
+    public Cellule(CModele modele, int x, int y,Joueur j ) {  // constructeur 
         this.modele = modele;
         this.etat = 0;
         this.x = x; this.y = y;
@@ -469,7 +459,7 @@ class Cellule {
 
 
 
-    public int donneEtat() {
+    public int donneEtat() {     // getters/setters 
         return etat;
     }
     public boolean contientjoueur(Joueur J ){
@@ -500,19 +490,20 @@ class CVue {
 
 
     public CVue(CModele modele) {
-
+                                            // construction de la fentetre 
         frame = new JFrame();
         frame.setTitle("Projet Java"); 
 
-        frame.setLayout(new BorderLayout(50,50));
-        grille = new VueGrille(modele);
+        frame.setLayout(new BorderLayout(50,50));  // disposition des élements 
+        grille = new VueGrille(modele);                       // création de la grille 
         frame.getContentPane().add(grille, BorderLayout.WEST);
-        commandes = new VueCommandes(modele);
+        commandes = new VueCommandes(modele);                  // création de l'interface joueur 
         frame.getContentPane().add(commandes, BorderLayout.CENTER);
 
+        frame.setResizable(false);
         frame.add(modele.msge, BorderLayout.NORTH);
         frame.pack();
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(null);                         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -526,7 +517,7 @@ class VueGrille extends JPanel implements Observer {
 
     private CModele modele;
 
-    private final static int TAILLE = 15;
+    private final static int TAILLE = 15;     // taille d'une cellule 
 
 
     public VueGrille(CModele modele) {
@@ -554,7 +545,7 @@ class VueGrille extends JPanel implements Observer {
         }
     }
 
-    private void paint(Graphics g, Cellule c, int x, int y) {
+    private void paint(Graphics g, Cellule c, int x, int y) {    // colorie les cases selont sont état si un joueur s'y trouve 
 
 
         if (c.donneEtat() == 1) {
@@ -569,7 +560,7 @@ class VueGrille extends JPanel implements Observer {
             g.setColor(Color.WHITE);                       // case basique (0) en blanc 
             g.fillRect(x, y, TAILLE, TAILLE);
         }
-        if (c.donneEtat() == 3) {                     // helico (3) en gris foncé  
+        if (c.donneEtat() == 3) {                     // helico (3) en gris foncé 
             g.setColor(Color.darkGray);
             g.fillRect(x, y, TAILLE, TAILLE);
             g.setColor(Color.RED);                                      
@@ -613,7 +604,7 @@ class VueGrille extends JPanel implements Observer {
         for (int i=0;i<modele.Tjoueurs.size();i++){
             if (c.contientjoueur(modele.Tjoueurs.get(i)) && modele.Tjoueurs.get(i)!=modele.Joueuractuel){
                 g.setColor(Color.BLACK);
-                g.fillRect(x, y, TAILLE, TAILLE);
+                g.fillRect(x, y, TAILLE, TAILLE);                          // alteration des cellules dans lesquelles se trouve les jouueurs autre que le joueurs actuels 
                 if(c.donneEtat() == 1){
                     g.setColor(new Color(25,100,150));
                     g.fillRect(x, y, TAILLE, TAILLE);
@@ -647,7 +638,7 @@ class VueGrille extends JPanel implements Observer {
 
             }
         }
-        if (c.contientjoueur(modele.Joueuractuel)){
+        if (c.contientjoueur(modele.Joueuractuel)){   // alteration de la cellule ou se trouve le jouueur actuelle 
             if (c.donneEtat()==0){
             g.setColor(Color.RED);
             g.fillRect(x, y, TAILLE, TAILLE);
@@ -696,7 +687,7 @@ class VueCommandes extends JPanel {
     public static JButton donneAir ;
     public static JButton donneTerre ;
 
-    public VueCommandes(CModele modele) {
+    public VueCommandes(CModele modele) {             // creation du tablau de commande 
         this.modele = modele;
         this.setLayout(new GridLayout(3,1,20,20) );  // tableau de commande en 1 colonnes et 3 lignes 
 
@@ -742,7 +733,7 @@ class VueCommandes extends JPanel {
         Actions.add(boutonchercherCle); 
         this.boutonchercherCle= boutonchercherCle ; 
 
-        JLabel actionsRestantes = new JLabel("Actions Restantes : 5");
+        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
         Actions.add(actionsRestantes); 
         this.actionsRestantes= actionsRestantes ; 
 
@@ -766,13 +757,12 @@ class VueCommandes extends JPanel {
         this.add(Actions);   // et on ajoute les actions a l'interface 
 
 
-        JPanel Info = new JPanel();
+        JPanel Info = new JPanel();   // et enfin on ajoute les inforamtions necessaires aux joueurs 
         Info.setLayout(new BorderLayout(30,30)); 
 
         JLabel tourdujoueur = new JLabel("C'est le tour du joueur 1");
         Info.add(tourdujoueur,BorderLayout.WEST); 
         this.tourdujoueur= tourdujoueur ; 
-
 
 
         JLabel inventaire = new JLabel("<html>" + "Listes des objets :<br/> "+
@@ -782,7 +772,6 @@ class VueCommandes extends JPanel {
         "JOUEUR4 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]" +"<html>");
         Info.add(inventaire,BorderLayout.CENTER); 
         this.inventaire= inventaire ; 
-        //Info.add(Inventaire);
         this.add(Info); 
 
 
@@ -819,7 +808,7 @@ class VueCommandes extends JPanel {
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt = 5;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
     private static int numjoueur = 1;
     
 
@@ -827,18 +816,14 @@ class Controleur implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
 
-        //modele.conditionDefaite();
-        
-
         Joueur j =modele.Joueuractuel; 
         JButton actionSource = (JButton) e.getSource(); 
-        
         
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=5;
+            cpt=3;
             numjoueur++;
             
             if (numjoueur>4){numjoueur=1;}
@@ -858,7 +843,7 @@ class Controleur implements ActionListener {
             // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
             try {modele.tour("z",j);}catch(IllegalStateException c){return ; }
             cpt-=1; 
-            
+                                                                                       // pour chaque action invalide on prend bien soin de ne pas décrémenter le compteur 
             
     }
         else if ( actionSource.equals(VueCommandes.boutonGauche)) {
@@ -911,7 +896,7 @@ class Controleur implements ActionListener {
             
         }
 
-        VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
+        VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+   // on met a jour l'inventaire des joueurs affiché a chaque action 
             "JOUEUR1 : " + "Clefs : " + modele.Tjoueurs.get(0).getcles() + "  Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +"<br/>" +
             "JOUEUR2 : " + "Clefs : " + modele.Tjoueurs.get(1).getcles() + "  Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +"<br/>" +
             "JOUEUR3 : " + "Clefs : " + modele.Tjoueurs.get(2).getcles() + "  Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +"<br/>" +
@@ -920,7 +905,7 @@ class Controleur implements ActionListener {
     VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
 
         if(modele.conditionDefaite(j)){
-            VueCommandes.inventaire.setText("PARTIE PERDUE");
+            VueCommandes.inventaire.setText("PARTIE PERDUE");                      // a la fin de la partie on désactive tout les boutons 
             VueCommandes.boutonAvance.setText("PARTIE PERDUE");
             VueCommandes.boutonAvance.setEnabled(false);
             VueCommandes.boutonHaut.setEnabled(false);
@@ -937,9 +922,6 @@ class Controleur implements ActionListener {
             VueCommandes.donneFeu.setEnabled(false);
             VueCommandes.donneTerre.setEnabled(false);
             VueCommandes.donneAir.setEnabled(false);
-            modele.message.setText("PARTIE PERDUE !");
-  
-            
 
 
 
@@ -962,8 +944,6 @@ class Controleur implements ActionListener {
         VueCommandes.donneTerre.setEnabled(false);
         VueCommandes.donneAir.setEnabled(false);
         modele.message.setText("PARTIE GAGNE !");
-
-
         
 }
 
