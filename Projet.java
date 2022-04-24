@@ -4,7 +4,10 @@ import java.util.*;
 import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.ProcessHandle.Info;
+
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicSliderUI.ActionScroller;
 
 
 interface Observer {
@@ -49,6 +52,8 @@ class CModele extends Observable {
     private Cellule[][] cellules;
     public  ArrayList<Joueur> Tjoueurs ; 
     public Joueur Joueuractuel ; 
+    public JPanel msge; 
+    public JLabel message; 
 
     public CModele() {
 
@@ -105,6 +110,19 @@ class CModele extends Observable {
 
             cellules[i][j].etat = k ;
         }
+
+
+        // placement du message de bienvenue et du message variable  :
+
+        msge= new JPanel();                                        
+        JLabel msg= new JLabel("BIENVENUE EXPLORATEURS !");      
+        msg.setFont(new Font(" Serif",Font.BOLD,20));
+        msg.setBounds(50,20,100,40);
+        msge.add(msg); 
+        message = new JLabel ("Prenez Garde cet ile semble pour le moins ... instable "); 
+        message.setForeground(Color.RED);
+        msge.add(message); 
+        
     }
 
     public CModele(ArrayList<Joueur> tjoueurs) {
@@ -157,8 +175,7 @@ class CModele extends Observable {
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
-        JLabel label = new JLabel("Case bloquee  ", JLabel.CENTER); 
-        JFrame frame = new JFrame("Rien ");frame.add(label);frame.setLocation(800, 10);  frame.setSize(200,200); frame.setVisible(true);
+        this.message.setText("Case bloque");
         throw new IllegalStateException("Case bloquee "); 
     }
        notifyObservers();
@@ -173,8 +190,7 @@ class CModele extends Observable {
         Cellule c4 = cellules[c.coordx()+1][c.coordy()];
 
         if (c.etat != 1 && c1.etat != 1 && c2.etat != 1 && c3.etat != 1 && c4.etat != 1){
-            JLabel label = new JLabel("Aucune case a secher ici", JLabel.CENTER);
-            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
+            this.message.setText("Aucune case a secher ici ");
             throw new IllegalStateException("Aucune case inondee");}
 
         if (c1.etat == 1){c1.etat = 0;}
@@ -203,32 +219,18 @@ class CModele extends Observable {
         }
     }
     public void recupereartefact(Joueur J, Cellule C){
-        JLabel label= new JLabel("?"); 
         switch (C.etat) {
             case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");}else {
-                label = new JLabel("Clé manquante (eau) ",JLabel.CENTER);
-                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
-                throw new IllegalStateException("C"); }; break ;
+            this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
             case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");}else {
-                label = new JLabel("Clé manquante (terre) ",JLabel.CENTER);
-                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
-                throw new IllegalStateException("C"); }; break ;
+                this.message.setText("Clé manquante (terre) ");throw new IllegalStateException("C"); }; break ;
             case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");}else {
-                label = new JLabel("Clé manquante (air) ",JLabel.CENTER);
-                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
-                throw new IllegalStateException("C"); }; break ;
+                this.message.setText("Clé manquante (air) ");throw new IllegalStateException("C"); }; break ;
             case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");} else {
-                label = new JLabel("Clé manquante (feu) ",JLabel.CENTER);
-                JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
-                throw new IllegalStateException("C"); }; break ;
-            default : label = new JLabel("Aucun artefact ici ",JLabel.CENTER);
-                    JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
-                    throw new IllegalStateException("C"); 
+                this.message.setText("Clé manquante (feu) ");throw new IllegalStateException("C"); }; break ;
+            default : this.message.setText("Aucun artefact ici");  throw new IllegalStateException("C"); 
         };               
     }
-
-
-
 
 
     public Cellule getCellule(int x, int y) {
@@ -239,17 +241,14 @@ class CModele extends Observable {
         int low = 1;
         int high = 6;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
         int i = r.nextInt(high-low) + low;
-        JLabel label ; 
 
         switch(i){
-            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clef du feu ", JLabel.CENTER);break; 
-            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clef de l'eau ", JLabel.CENTER);break;
-            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clef de l'air ", JLabel.CENTER);break; 
-            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clef de la terre ", JLabel.CENTER);break;
-            default : label = new JLabel("Vous n'avez rien obtenu", JLabel.CENTER);break; 
+            case 1 : j.recoitcle("feu"); this.message.setText("Vous avez obtenu une clef du feu ");break; 
+            case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
+            case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
+            case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
+            default : this.message.setText("Vous n'avez rien obtenu");break; 
         }; 
-        JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
-
     }
 
     public void lancer_de_des2(Joueur j ){
@@ -257,18 +256,15 @@ class CModele extends Observable {
         int low = 1;
         int high = 7;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
         int i = r.nextInt(high-low) + low;
-        JLabel label ; 
 
         switch(i){
-            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clef du feu ", JLabel.CENTER);break; 
-            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clef de l'eau ", JLabel.CENTER);break;
-            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clef de l'air ", JLabel.CENTER);break; 
-            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clef de la terre ", JLabel.CENTER);break;
-            case 5 : avance();label = new JLabel("Vous avez provoque une montee des eaux !", JLabel.CENTER);break;
-            default : label = new JLabel("...Mais rien ne se passe", JLabel.CENTER);break; 
+            case 1 : j.recoitcle("feu"); this.message.setText("Vous avez obtenu une clef du feu ");break; 
+            case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
+            case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
+            case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
+            case 5 : avance();this.message.setText("Vous avez declencher une montee des eaux !");break;
+            default :this.message.setText("...Mais rien ne se passe");break; 
         }; 
-        JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
-
     }
 
 
@@ -352,7 +348,6 @@ class CModele extends Observable {
     }
 
     public void echangecle(Joueur J, String cle){
-        JLabel label= new JLabel("?"); 
         if(J.possedecle(cle)){
 
 
@@ -383,15 +378,12 @@ class CModele extends Observable {
 
         }
         else {
-            label = new JLabel("mauvaise position",JLabel.CENTER);
-            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+            this.message.setText("mauvaise position");
             throw new IllegalStateException("C"); }
-
 
     }
     else {
-        label = new JLabel("pas de cle",JLabel.CENTER);
-        JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+        this.message.setText("pas de cle ");
         throw new IllegalStateException("C"); }
 }
 }
@@ -520,7 +512,6 @@ class Cellule {
 class CVue {
 
     private JFrame frame;
-
     private VueGrille grille;
     private VueCommandes commandes;
 
@@ -528,21 +519,22 @@ class CVue {
     public CVue(CModele modele) {
 
         frame = new JFrame();
-        frame.setTitle("Projet Java");
+        frame.setTitle("Projet Java"); 
 
-        frame.setLayout(new FlowLayout());
-
-
+        frame.setLayout(new BorderLayout(50,50));
         grille = new VueGrille(modele);
-        frame.add(grille);
+        frame.getContentPane().add(grille, BorderLayout.WEST);
         commandes = new VueCommandes(modele);
-        frame.add(commandes);
+        frame.getContentPane().add(commandes, BorderLayout.CENTER);
 
-
+        frame.add(modele.msge, BorderLayout.NORTH);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
+
+    
 }
 
 
@@ -674,10 +666,9 @@ class VueCommandes extends JPanel {
     public static JButton boutonRecup; 
     public static JButton boutonchercherCle; 
 
-    public static JButton actionsRestantes; 
-
-    public static JButton tourdujoueur; 
-    public static JButton inventaire; 
+    public static JLabel actionsRestantes; 
+    public static JLabel tourdujoueur; 
+    public static JLabel inventaire; 
 
     public static JButton donneEau ;
     public static JButton donneFeu ;
@@ -686,73 +677,91 @@ class VueCommandes extends JPanel {
 
     public VueCommandes(CModele modele) {
         this.modele = modele;
+        this.setLayout(new GridLayout(3,1,20,20) );  // tableau de commande en 1 colonnes et 3 lignes 
+
+        JPanel Deplacements = new JPanel();  // En premier les commandes de deplacements et fin de tour (commandes primaires)
+        Deplacements.setLayout(new BorderLayout(10,40));
 
         JButton boutonAvance = new JButton("Fin de tour");
-        this.add(boutonAvance);
+        Deplacements.add(boutonAvance, BorderLayout.CENTER);
         this.boutonAvance= boutonAvance; 
+
         JButton boutonHaut = new JButton("Haut ");
-        this.add(boutonHaut); 
+        Deplacements.add(boutonHaut, BorderLayout.NORTH);
         this.boutonHaut= boutonHaut; 
 
         JButton boutonGauche = new JButton("Gauche ");
-        this.add(boutonGauche); 
+        Deplacements.add(boutonGauche, BorderLayout.WEST);
         this.boutonGauche= boutonGauche; 
 
         JButton boutonDroite = new JButton("Droite");
-        this.add(boutonDroite); 
+        Deplacements.add(boutonDroite, BorderLayout.EAST);
         this.boutonDroite= boutonDroite; 
 
         JButton boutonBas = new JButton("Bas");
-        this.add(boutonBas); 
+        Deplacements.add(boutonBas, BorderLayout.SOUTH); 
         this.boutonBas= boutonBas; 
 
+        this.add(Deplacements);   // on ajoute donc deplacement aux commandes 
+
+
+        JPanel Actions = new JPanel();     // ensuite on introduis les commandes secondaire sous la forme d'un tableau 
+        Actions.setLayout(new GridLayout(2,3,30,30)); 
+
+
         JButton boutonSeche = new JButton("Seche");
-        this.add(boutonSeche); 
+        Actions.add(boutonSeche); 
         this.boutonSeche= boutonSeche; 
 
         JButton boutonRecup = new JButton("Recuperer artefact");
-        this.add(boutonRecup); 
+        Actions.add(boutonRecup); 
         this.boutonRecup= boutonRecup ; 
 
         JButton boutonchercherCle = new JButton("Chercher clef");
-        this.add(boutonchercherCle); 
+        Actions.add(boutonchercherCle); 
         this.boutonchercherCle= boutonchercherCle ; 
 
-        JButton actionsRestantes = new JButton("Actions Restantes : 3");
-        this.add(actionsRestantes); 
-        this.actionsRestantes= actionsRestantes ; 
-
-        JButton tourdujoueur = new JButton("C'est le tour du joueur 1");
-        this.add(tourdujoueur); 
-        this.tourdujoueur= tourdujoueur ; 
-
-        JButton inventaire = new JButton("<html>" + "Listes des objets :<br/> "+
-        "JOUEUR1 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
-        "JOUEUR2 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
-        "JOUEUR3 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]"+"<br/>" +
-        "JOUEUR4 : <br/>" + "Clefs : " + "[]" +"<br/>"+ "Artefacts : " + "[]" +"<html>");
-        this.add(inventaire); 
-        this.inventaire= inventaire ; 
-
         JButton donneTerre = new JButton("Donner clef terre");
-        this.add(donneTerre);
+        Actions.add(donneTerre);
         this.donneTerre= donneTerre; 
 
         JButton donneFeu = new JButton("Donner clef feu");
-        this.add(donneFeu);
+        Actions.add(donneFeu);
         this.donneFeu= donneFeu; 
 
         JButton donneAir = new JButton("Donner clef air");
-        this.add(donneAir);
+        Actions.add(donneAir);
         this.donneAir= donneAir; 
 
         JButton donneEau = new JButton("Donner clef eau");
-        this.add(donneEau);
+        Actions.add(donneEau);
         this.donneEau= donneEau; 
 
+        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
+        Actions.add(actionsRestantes); 
+        this.actionsRestantes= actionsRestantes ; 
+
+        this.add(Actions);   // et on ajoute les actions a l'interface 
+
+
+        JPanel Info = new JPanel();
+        Info.setLayout(new BorderLayout(30,30)); 
+
+        JLabel tourdujoueur = new JLabel("C'est le tour du joueur 1");
+        Info.add(tourdujoueur,BorderLayout.WEST); 
+        this.tourdujoueur= tourdujoueur ; 
 
 
 
+        JLabel inventaire = new JLabel("<html>" + "Listes des objets :<br/> "+
+        "JOUEUR1 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
+        "JOUEUR2 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
+        "JOUEUR3 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]"+"<br/>" + 
+        "JOUEUR4 : " + "Clefs : " + "[]" + "  Artefacts : " + "[]" +"<html>");
+        Info.add(inventaire,BorderLayout.CENTER); 
+        this.inventaire= inventaire ; 
+        //Info.add(Inventaire);
+        this.add(Info); 
 
 
         Controleur ctrl = new Controleur(modele);
@@ -763,10 +772,6 @@ class VueCommandes extends JPanel {
         Controleur Seche= new Controleur(modele);
         Controleur Recup= new Controleur(modele);
         Controleur Clef= new Controleur(modele);
-
-        Controleur AR= new Controleur(modele);
-        Controleur TJ= new Controleur(modele);
-        Controleur inv= new Controleur(modele);
 
         Controleur air= new Controleur(modele);
         Controleur feu= new Controleur(modele);
@@ -781,10 +786,6 @@ class VueCommandes extends JPanel {
         boutonSeche.addActionListener(Seche);
         boutonRecup.addActionListener(Recup);
         boutonchercherCle.addActionListener(Clef);
-
-        actionsRestantes.addActionListener(AR);
-        tourdujoueur.addActionListener(TJ);
-        inventaire.addActionListener(inv);
 
         donneTerre.addActionListener(terre);
         donneAir.addActionListener(air);
@@ -823,8 +824,7 @@ class Controleur implements ActionListener {
             VueCommandes.tourdujoueur.setText("C'est le tour du joueur " + numjoueur);
     }
         if (cpt<1){
-            JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
-            JFrame frame = new JFrame("Erreur");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
+            modele.message.setText("Votre tour est fini ");
             return ; 
         }
         else if (actionSource.equals(VueCommandes.boutonRecup)){
@@ -890,10 +890,10 @@ class Controleur implements ActionListener {
         }
 
         VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
-            "JOUEUR1 : <br/>" + "Clefs : " + modele.Tjoueurs.get(0).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +
-            "JOUEUR2 : <br/>" + "Clefs : " + modele.Tjoueurs.get(1).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +
-            "JOUEUR3 : <br/>" + "Clefs : " + modele.Tjoueurs.get(2).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +
-            "JOUEUR4 : <br/>" + "Clefs : " + modele.Tjoueurs.get(3).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(3).getartefacts() +
+            "JOUEUR1 : " + "Clefs : " + modele.Tjoueurs.get(0).getcles() + "  Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +
+            "JOUEUR2 : " + "Clefs : " + modele.Tjoueurs.get(1).getcles() + "  Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +
+            "JOUEUR3 : " + "Clefs : " + modele.Tjoueurs.get(2).getcles() + "  Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +
+            "JOUEUR4 : " + "Clefs : " + modele.Tjoueurs.get(3).getcles() + "  Artefacts : " + modele.Tjoueurs.get(3).getartefacts() +
             "</html>");
     VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
 
@@ -946,3 +946,4 @@ class Controleur implements ActionListener {
     
 }
 }
+
