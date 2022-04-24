@@ -1,6 +1,6 @@
 # Projet-POGL_Maxime_Ilyes
 
-Nom du binôme : 
+* Nom du binôme : <br/>
 Ilyes Tebourski, Maxime Parizot
 
 Parties du sujet traitées :
