@@ -922,7 +922,7 @@ class Controleur implements ActionListener {
             VueCommandes.donneFeu.setEnabled(false);
             VueCommandes.donneTerre.setEnabled(false);
             VueCommandes.donneAir.setEnabled(false);
-            modele.message.setText("PARTIE GAGNE !");
+            modele.message.setText("PARTIE PERDUE !");
 
 
 
