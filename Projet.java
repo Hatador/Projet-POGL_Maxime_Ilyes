@@ -352,6 +352,9 @@ class CModele extends Observable {
     }
 
     public void echangecle(Joueur J, String cle){
+        JLabel label= new JLabel("?"); 
+        if(J.possedecle(cle)){
+
 
         Cellule j = emplacementjoueur(J); 
         Cellule j1 = cellules[j.coordx()][j.coordy()-1];
@@ -360,11 +363,37 @@ class CModele extends Observable {
         Cellule j4 = cellules[j.coordx()+1][j.coordy()];
 
         if(j1.getjoueur() != null ^ j2.getjoueur() != null ^ j3.getjoueur() != null ^ j4.getjoueur() != null){
+            J.enlevecle(cle);
+            if(j1.getjoueur() != null){
+                j1.getjoueur().recoitcle(cle);
+
+            }
+            if(j2.getjoueur() != null){
+                j2.getjoueur().recoitcle(cle);
+                
+            }
+            if(j3.getjoueur() != null){
+                j3.getjoueur().recoitcle(cle);
+                
+            }
+            if(j4.getjoueur() != null){
+                j4.getjoueur().recoitcle(cle);
+                
+            }
 
         }
+        else {
+            label = new JLabel("mauvaise position",JLabel.CENTER);
+            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+            throw new IllegalStateException("C"); }
 
 
     }
+    else {
+        label = new JLabel("pas de cle",JLabel.CENTER);
+        JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
+        throw new IllegalStateException("C"); }
+}
 }
 
 class Joueur {
@@ -650,6 +679,11 @@ class VueCommandes extends JPanel {
     public static JButton tourdujoueur; 
     public static JButton inventaire; 
 
+    public static JButton donneEau ;
+    public static JButton donneFeu ;
+    public static JButton donneAir ;
+    public static JButton donneTerre ;
+
     public VueCommandes(CModele modele) {
         this.modele = modele;
 
@@ -700,6 +734,24 @@ class VueCommandes extends JPanel {
         this.add(inventaire); 
         this.inventaire= inventaire ; 
 
+        JButton donneTerre = new JButton("Donner clef terre");
+        this.add(donneTerre);
+        this.donneTerre= donneTerre; 
+
+        JButton donneFeu = new JButton("Donner clef feu");
+        this.add(donneFeu);
+        this.donneFeu= donneFeu; 
+
+        JButton donneAir = new JButton("Donner clef air");
+        this.add(donneAir);
+        this.donneAir= donneAir; 
+
+        JButton donneEau = new JButton("Donner clef eau");
+        this.add(donneEau);
+        this.donneEau= donneEau; 
+
+
+
 
 
 
@@ -716,6 +768,11 @@ class VueCommandes extends JPanel {
         Controleur TJ= new Controleur(modele);
         Controleur inv= new Controleur(modele);
 
+        Controleur air= new Controleur(modele);
+        Controleur feu= new Controleur(modele);
+        Controleur eau= new Controleur(modele);
+        Controleur terre= new Controleur(modele);
+
         boutonHaut.addActionListener(haut);
         boutonAvance.addActionListener(ctrl);
         boutonBas.addActionListener(Bas);
@@ -728,13 +785,18 @@ class VueCommandes extends JPanel {
         actionsRestantes.addActionListener(AR);
         tourdujoueur.addActionListener(TJ);
         inventaire.addActionListener(inv);
+
+        donneTerre.addActionListener(terre);
+        donneAir.addActionListener(air);
+        donneEau.addActionListener(eau);
+        donneFeu.addActionListener(feu);
     }
 }
 
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt = 30;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
     private static int numjoueur = 1;
     
 
@@ -753,7 +815,7 @@ class Controleur implements ActionListener {
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=30;
+            cpt=3;
             numjoueur++;
             
             if (numjoueur>4){numjoueur=1;}
@@ -803,6 +865,30 @@ class Controleur implements ActionListener {
             
         }
 
+        else if ( actionSource.equals(VueCommandes.donneEau)) {
+            try {modele.echangecle(j,"eau");}catch(IllegalStateException c){return ; }             
+            cpt-=1; 
+            
+        }
+
+        else if ( actionSource.equals(VueCommandes.donneFeu)) {
+            try {modele.echangecle(j,"feu");}catch(IllegalStateException c){return ; }             
+            cpt-=1; 
+            
+        }
+
+        else if ( actionSource.equals(VueCommandes.donneTerre)) {
+            try {modele.echangecle(j,"terre");}catch(IllegalStateException c){return ; }             
+            cpt-=1; 
+            
+        }
+
+        else if ( actionSource.equals(VueCommandes.donneAir)) {
+            try {modele.echangecle(j,"air");}catch(IllegalStateException c){return ; }             
+            cpt-=1; 
+            
+        }
+
         VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
             "JOUEUR1 : <br/>" + "Clefs : " + modele.Tjoueurs.get(0).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +
             "JOUEUR2 : <br/>" + "Clefs : " + modele.Tjoueurs.get(1).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +
@@ -825,6 +911,10 @@ class Controleur implements ActionListener {
             VueCommandes.actionsRestantes.setEnabled(false);
             VueCommandes.tourdujoueur.setEnabled(false);
             VueCommandes.inventaire.setEnabled(false);
+            VueCommandes.donneEau.setEnabled(false);
+            VueCommandes.donneFeu.setEnabled(false);
+            VueCommandes.donneTerre.setEnabled(false);
+            VueCommandes.donneAir.setEnabled(false);
     }
     if(modele.conditionVictoire()){
         VueCommandes.inventaire.setText("PARTIE GAGNE !!!!!!!!!!!!!!!!");
@@ -840,6 +930,10 @@ class Controleur implements ActionListener {
         VueCommandes.actionsRestantes.setEnabled(false);
         VueCommandes.tourdujoueur.setEnabled(false);
         VueCommandes.inventaire.setEnabled(false);
+        VueCommandes.donneEau.setEnabled(false);
+        VueCommandes.donneFeu.setEnabled(false);
+        VueCommandes.donneTerre.setEnabled(false);
+        VueCommandes.donneAir.setEnabled(false);
 }
     
         
