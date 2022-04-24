@@ -1,52 +1,30 @@
 # Projet-POGL_Maxime_Ilyes
-////
-a ecrire dedans :
 
-nom du binome
-les parties du sujet que vous avez traitées
+Nom du binôme : 
+Ilyes Tebourski, Maxime Parizot
 
-choix d'architecture
+Parties du sujet traitées :
+10.1 : 1) 2) 3) ∞)
+10.2 : 1) 2) 3) 4) 5) ∞)
+10.3 : 1) 2) 3) ∞)
+10.4 : échange de clé
 
-problemes tjr presents
+Choix d'architecture :
 
 
+Problèmes toujours présents :
 
 
-instruction de lancement
-diagramme de classe
-test de méthodes
-documentation; description des parametres, description des retours, courtes desc de la fonction
+Instruction de lancement :
 
-////
-avancement 24/4
 
-10.1 fait
+Diagramme de classe :
+voir fichier .pdf
 
-1) fait
-2) fait
-3) fait
-+) fait
+Tests de méthodes :
 
-10.2 fait
 
-1) fait
-2) fait
-3) fait
-4) fait
-5) fait
-+) fait
+Documentation :
+voir fichier .java
 
-10.3 fait
-
-1) fait
-2) fait
-3) fait
-+) fait
-
-10.4: échange de clé) fait
-
-amelioration graphique? en cours
-correction bug? ok
-
-////
-fin
+#
