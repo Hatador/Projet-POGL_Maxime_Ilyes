@@ -16,10 +16,10 @@ x <br/>
 x <br/>
 
 * Diagramme de classe : <br/>
-voir fichier .pdf
+voir fichier Diagramme.png
 
 * Documentation : <br/>
-voir fichier .java
+voir fichier Projet.java
 
 * Règles : <br/>
 Une partie se joue à 4 joueurs en coopération <br/>
