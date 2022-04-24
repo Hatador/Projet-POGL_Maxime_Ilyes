@@ -153,13 +153,13 @@ class CModele extends Observable {
             case "d" -> cellules[c.coordx()+1][c.coordy()];
             default -> throw new IllegalStateException("Invalid mouvement");
         };
-        if (c1.etat != 2 && c1.getjoueur() == null){
+        if (c1.etat != 2 && c1.etat != 3 && c1.getjoueur() == null){
         c1.ajoutejoueur(c.getjoueur()); 
         c.enlevejoueur();
     } else{
-        JLabel label = new JLabel("Case submérgé  ", JLabel.CENTER); 
+        JLabel label = new JLabel("Case bloquee  ", JLabel.CENTER); 
         JFrame frame = new JFrame("Rien ");frame.add(label);frame.setLocation(800, 10);  frame.setSize(200,200); frame.setVisible(true);
-        throw new IllegalStateException("Case submérgé "); 
+        throw new IllegalStateException("Case bloquee "); 
     }
        notifyObservers();
     }
@@ -172,13 +172,18 @@ class CModele extends Observable {
         Cellule c3 = cellules[c.coordx()][c.coordy()+1];
         Cellule c4 = cellules[c.coordx()+1][c.coordy()];
 
+        if (c.etat != 1 && c1.etat != 1 && c2.etat != 1 && c3.etat != 1 && c4.etat != 1){
+            JLabel label = new JLabel("Aucune case a secher ici", JLabel.CENTER);
+            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
+            throw new IllegalStateException("Aucune case inondee");}
+
         if (c1.etat == 1){c1.etat = 0;}
         if (c2.etat == 1){c2.etat = 0;}
         if (c3.etat == 1){c3.etat = 0;}
         if (c4.etat == 1){c4.etat = 0;}
-        else{JLabel label = new JLabel("Aucune case a secher ici", JLabel.CENTER);
-            JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true);
-            throw new IllegalStateException("Aucune case inondée");}
+        if (c.etat == 1){c.etat = 0;}
+
+        
 
         notifyObservers();
     }
@@ -200,19 +205,19 @@ class CModele extends Observable {
     public void recupereartefact(Joueur J, Cellule C){
         JLabel label= new JLabel("?"); 
         switch (C.etat) {
-            case 4 : if (J.possedecle("eau")){J.recoiteartefact("eau");}else {
+            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");}else {
                 label = new JLabel("Clé manquante (eau) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possedecle("terre")){J.recoiteartefact("terre");}else {
+            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");}else {
                 label = new JLabel("Clé manquante (terre) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possedecle("air")){J.recoiteartefact("air");}else {
+            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");}else {
                 label = new JLabel("Clé manquante (air) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possedecle("feu")){J.recoiteartefact("feu");} else {
+            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");} else {
                 label = new JLabel("Clé manquante (feu) ",JLabel.CENTER);
                 JFrame frame = new JFrame("Erreur");frame.add(label);frame.setLocation(800, 10);  frame.setSize(300,300); frame.setVisible(true); 
                 throw new IllegalStateException("C"); }; break ;
@@ -237,15 +242,36 @@ class CModele extends Observable {
         JLabel label ; 
 
         switch(i){
-            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clé du feu ", JLabel.CENTER);break; 
-            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clé de l'eau ", JLabel.CENTER);break;
-            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clé de l'air ", JLabel.CENTER);break; 
-            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clé de la terre ", JLabel.CENTER);break;
+            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clef du feu ", JLabel.CENTER);break; 
+            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clef de l'eau ", JLabel.CENTER);break;
+            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clef de l'air ", JLabel.CENTER);break; 
+            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clef de la terre ", JLabel.CENTER);break;
             default : label = new JLabel("Vous n'avez rien obtenu", JLabel.CENTER);break; 
         }; 
         JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
 
     }
+
+    public void lancer_de_des2(Joueur j ){
+        Random r = new Random();
+        int low = 1;
+        int high = 7;                   // on regle ici la "taille" du dés pour regler la difficulté du jeu 
+        int i = r.nextInt(high-low) + low;
+        JLabel label ; 
+
+        switch(i){
+            case 1 : j.recoitcle("feu"); label = new JLabel("Vous avez obtenu une clef du feu ", JLabel.CENTER);break; 
+            case 2 : j.recoitcle("eau");label = new JLabel("Vous avez obtenu une clef de l'eau ", JLabel.CENTER);break;
+            case 3 : j.recoitcle("air");label = new JLabel("Vous avez obtenu une clef de l'air ", JLabel.CENTER);break; 
+            case 4 : j.recoitcle("terre");label = new JLabel("Vous avez obtenu une clef de la terre ", JLabel.CENTER);break;
+            case 5 : avance();label = new JLabel("Vous avez provoque une montee des eaux !", JLabel.CENTER);break;
+            default : label = new JLabel("...Mais rien ne se passe", JLabel.CENTER);break; 
+        }; 
+        JFrame frame = new JFrame("Obtention");frame.setLocation(800, 10);frame.add(label);frame.setSize(300,300); frame.setVisible(true);
+
+    }
+
+
 
 
 
@@ -261,8 +287,21 @@ class CModele extends Observable {
         return null;
 
 }
+    public void couleurbords(int c){
+        int a=1; 
+        for(int i=0;i<=LARGEUR;i++){
+            cellules[i][a].etat=c; 
+            cellules[i][HAUTEUR-a+1].etat=c; 
+        }
 
-    public boolean conditionDefaite(){
+        for(int i=0;i<=HAUTEUR;i++){
+            cellules[a][i].etat=c; 
+            cellules[LARGEUR-a+1][i].etat=c; 
+
+    }
+}
+
+    public boolean conditionDefaite(Joueur J){
         
         Cellule c = emplacementHelico(); 
         Cellule c1 = cellules[c.coordx()][c.coordy()-1];
@@ -270,9 +309,25 @@ class CModele extends Observable {
         Cellule c3 = cellules[c.coordx()][c.coordy()+1];
         Cellule c4 = cellules[c.coordx()+1][c.coordy()];
 
-        if (c1.etat == 2 || c2.etat == 2 || c3.etat == 2 || c4.etat == 2){     
+        if (c1.etat == 2 || c2.etat == 2 || c3.etat == 2 || c4.etat == 2){    
+            couleurbords(8); 
             return true;     
         }
+
+        Cellule j = emplacementjoueur(J); 
+        Cellule j1 = cellules[j.coordx()][j.coordy()-1];
+        Cellule j2 = cellules[j.coordx()-1][j.coordy()];
+        Cellule j3 = cellules[j.coordx()][j.coordy()+1];
+        Cellule j4 = cellules[j.coordx()+1][j.coordy()];
+
+        if (j1.etat == 2 && j2.etat == 2 && j3.etat == 2 && j4.etat == 2){   
+            couleurbords(8);  
+            return true;     
+        }
+
+
+
+
         return false;
     }
 
@@ -284,10 +339,31 @@ class CModele extends Observable {
         Cellule c3 = cellules[c.coordx()][c.coordy()+1];
         Cellule c4 = cellules[c.coordx()+1][c.coordy()];
 
-        if (c1.getjoueur() != null && c2.getjoueur() != null && c3.getjoueur() != null && c4.getjoueur() != null){     
+        if (c1.getjoueur() != null && c2.getjoueur() != null && c3.getjoueur() != null && c4.getjoueur() != null){  
+            for(int i=0; i<LARGEUR+2; i++) {
+                for(int j=0; j<HAUTEUR+2; j++) {
+                    if (cellules[i][j].etat>3){return false;}
+                }
+            }   
+            couleurbords(9); 
             return true;     
         }
         return false;
+    }
+
+    public void echangecle(Joueur J, String cle){
+
+        Cellule j = emplacementjoueur(J); 
+        Cellule j1 = cellules[j.coordx()][j.coordy()-1];
+        Cellule j2 = cellules[j.coordx()-1][j.coordy()];
+        Cellule j3 = cellules[j.coordx()][j.coordy()+1];
+        Cellule j4 = cellules[j.coordx()+1][j.coordy()];
+
+        if(j1.getjoueur() != null ^ j2.getjoueur() != null ^ j3.getjoueur() != null ^ j4.getjoueur() != null){
+
+        }
+
+
     }
 }
 
@@ -325,6 +401,34 @@ class Joueur {
             }
         }return false ; 
     }
+
+    public void enleve2cle(String cle){
+        this.cles.remove(cle); 
+        this.cles.remove(cle);
+    }
+
+    public boolean possede2cle(String cle){
+        for(int i=0;i<this.cles.size();i++){
+            if (this.cles.get(i)==cle){
+                int k=i;
+                if(k != this.cles.size()-1){
+                    for(int j=k;j<this.cles.size();j++){
+                        if (this.cles.get(j)==cle){
+                            return true ; 
+                        }
+
+                        
+
+                }
+                
+
+                }
+                
+            }
+        }return false ; 
+    }
+
+
     public boolean possedeartefacts(String artefact){
         for(int i=0;i<this.artefacts.size();i++){
             if (this.artefacts.get(i)==artefact){
@@ -450,7 +554,7 @@ class VueGrille extends JPanel implements Observer {
 
 
         if (c.estVivante() == 1) {
-            g.setColor(new Color(51, 153, 255));   // case inoncé (1) en bleu clair 
+            g.setColor(new Color(50, 150, 255));   // case inoncé (1) en bleu clair 
         } 
         if (c.estVivante() == 2) {
             g.setColor(Color.BLUE);                           // case submergé (2) en bleu 
@@ -461,15 +565,7 @@ class VueGrille extends JPanel implements Observer {
         if (c.estVivante() == 3) {
             g.setColor(Color.darkGray);                    // helico (3) en gris foncé 
         }
-        for (int i=0;i<modele.Tjoueurs.size();i++){
-            if (c.contientjoueur(modele.Tjoueurs.get(i))){
-                g.setColor(Color.BLACK);
-            }
-        }
-        if (c.contientjoueur(modele.Joueuractuel)){
-            g.setColor(Color.RED);
-        }
-        
+
         if (c.estVivante()==4){
             g.setColor(Color.CYAN);                           // eau (4)   en cyan 
         }
@@ -482,6 +578,55 @@ class VueGrille extends JPanel implements Observer {
         if (c.estVivante()==7){
             g.setColor(new Color(250, 122, 0));      // feu (7)   en orange 
         }
+        if (c.estVivante()==8){
+            g.setColor(Color.RED);      // feu (7)   en orange 
+        }
+        if (c.estVivante()==9){
+            g.setColor(Color.GREEN);      // feu (7)   en orange 
+        }
+
+
+        
+        for (int i=0;i<modele.Tjoueurs.size();i++){
+            if (c.contientjoueur(modele.Tjoueurs.get(i))){
+                g.setColor(Color.BLACK);
+                if(c.estVivante() == 1){
+                    g.setColor(new Color(25,100,150));
+                }
+                if(c.estVivante() == 2){
+                    g.setColor(new Color(0,50,100));
+                }
+                if (c.estVivante()==4){
+                    g.setColor(new Color(0,204,204));                           
+                }
+                if (c.estVivante()==5){
+                    g.setColor(new Color(54, 18, 0));         
+                }
+                if (c.estVivante()==6){
+                    g.setColor(new Color(180, 120, 100));     
+                }
+                if (c.estVivante()==7){
+                    g.setColor(new Color(200, 100, 0));      
+                }
+
+
+
+            }
+        }
+        if (c.contientjoueur(modele.Joueuractuel)){
+            g.setColor(Color.RED);
+            if(c.estVivante() == 1){
+                g.setColor(new Color(175, 25, 25));
+            }
+            if(c.estVivante() == 2){
+                g.setColor(new Color(100,25,25));
+            }
+            if(c.estVivante() >= 3){
+                g.setColor(new Color(137,25,25));
+            }
+        }
+        
+        
             g.fillRect(x, y, TAILLE, TAILLE);
         }
 }
@@ -498,6 +643,7 @@ class VueCommandes extends JPanel {
     public static JButton boutonBas ;
     public static JButton boutonSeche ;
     public static JButton boutonRecup; 
+    public static JButton boutonchercherCle; 
 
     public static JButton actionsRestantes; 
 
@@ -534,6 +680,10 @@ class VueCommandes extends JPanel {
         this.add(boutonRecup); 
         this.boutonRecup= boutonRecup ; 
 
+        JButton boutonchercherCle = new JButton("Chercher clef");
+        this.add(boutonchercherCle); 
+        this.boutonchercherCle= boutonchercherCle ; 
+
         JButton actionsRestantes = new JButton("Actions Restantes : 3");
         this.add(actionsRestantes); 
         this.actionsRestantes= actionsRestantes ; 
@@ -560,6 +710,7 @@ class VueCommandes extends JPanel {
         Controleur Gauche= new Controleur(modele);
         Controleur Seche= new Controleur(modele);
         Controleur Recup= new Controleur(modele);
+        Controleur Clef= new Controleur(modele);
 
         Controleur AR= new Controleur(modele);
         Controleur TJ= new Controleur(modele);
@@ -572,6 +723,7 @@ class VueCommandes extends JPanel {
         boutonGauche.addActionListener(Gauche);
         boutonSeche.addActionListener(Seche);
         boutonRecup.addActionListener(Recup);
+        boutonchercherCle.addActionListener(Clef);
 
         actionsRestantes.addActionListener(AR);
         tourdujoueur.addActionListener(TJ);
@@ -582,7 +734,7 @@ class VueCommandes extends JPanel {
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 30;        // pour limiter le nombre d'action on implemente un compteur 
     private static int numjoueur = 1;
     
 
@@ -595,24 +747,18 @@ class Controleur implements ActionListener {
 
         Joueur j =modele.Joueuractuel; 
         JButton actionSource = (JButton) e.getSource(); 
-        VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
-         "JOUEUR1 : <br/>" + "Clefs : " + modele.Tjoueurs.get(0).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
-         "JOUEUR2 : <br/>" + "Clefs : " + modele.Tjoueurs.get(1).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
-         "JOUEUR3 : <br/>" + "Clefs : " + modele.Tjoueurs.get(2).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts()+"<br/>" +
-         "JOUEUR4 : <br/>" + "Clefs : " + modele.Tjoueurs.get(3).getcles() +"<br/>"+ "Artefacts : " + modele.Joueuractuel.getartefacts() +
-         "</html>");
+        
         
         if ( actionSource.equals(VueCommandes.boutonAvance )) {    // lequel se réinitialise a chaque fin de tour 
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=3;
+            cpt=30;
             numjoueur++;
             
             if (numjoueur>4){numjoueur=1;}
             VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
             VueCommandes.tourdujoueur.setText("C'est le tour du joueur " + numjoueur);
-            //VueCommandes.inventaire.setText("Clefs : " + modele.Joueuractuel.getcles() + "Artefacts : " + modele.Joueuractuel.getartefacts());
     }
         if (cpt<1){
             JLabel label = new JLabel("Votre tour est fini ", JLabel.CENTER); 
@@ -622,36 +768,50 @@ class Controleur implements ActionListener {
         else if (actionSource.equals(VueCommandes.boutonRecup)){
             try { modele.recupereartefact(j, modele.emplacementjoueur(j));} catch (IllegalStateException C){ return ; }
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
         }
         else if ( actionSource.equals(VueCommandes.boutonHaut)) {
             // si ce compteur est a 3 tout autre action que Fin de tour n'aura aucun effet 
             try {modele.tour("z",j);}catch(IllegalStateException c){return ; }
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
             
     }
         else if ( actionSource.equals(VueCommandes.boutonGauche)) {
             try {modele.tour("q",j);}catch(IllegalStateException c){return ; }
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
     }
         else if ( actionSource.equals(VueCommandes.boutonBas)) {
             try {modele.tour("s",j);}catch(IllegalStateException c){return ; }
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
     }
         else if ( actionSource.equals(VueCommandes.boutonDroite)) {
             try {modele.tour("d",j);}catch(IllegalStateException c){return ; }
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
     }
         else if ( actionSource.equals(VueCommandes.boutonSeche)) {
             try {modele.seche(j);}catch(IllegalStateException c){return ; } 
             cpt-=1; 
-            VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+            
 }
-        if(modele.conditionDefaite()){
+        else if ( actionSource.equals(VueCommandes.boutonchercherCle)) {
+            try {modele.lancer_de_des2(j);}catch(IllegalStateException c){return ; }             
+            cpt-=1; 
+            
+        }
+
+        VueCommandes.inventaire.setText("<html>" + "Listes des objets :<br/> "+
+            "JOUEUR1 : <br/>" + "Clefs : " + modele.Tjoueurs.get(0).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(0).getartefacts()+"<br/>" +
+            "JOUEUR2 : <br/>" + "Clefs : " + modele.Tjoueurs.get(1).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(1).getartefacts()+"<br/>" +
+            "JOUEUR3 : <br/>" + "Clefs : " + modele.Tjoueurs.get(2).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(2).getartefacts()+"<br/>" +
+            "JOUEUR4 : <br/>" + "Clefs : " + modele.Tjoueurs.get(3).getcles() +"<br/>"+ "Artefacts : " + modele.Tjoueurs.get(3).getartefacts() +
+            "</html>");
+    VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
+
+        if(modele.conditionDefaite(j)){
             VueCommandes.inventaire.setText("PARTIE PERDUE");
             VueCommandes.boutonAvance.setText("PARTIE PERDUE");
             VueCommandes.boutonAvance.setEnabled(false);
@@ -660,6 +820,7 @@ class Controleur implements ActionListener {
             VueCommandes.boutonGauche.setEnabled(false);
             VueCommandes.boutonBas.setEnabled(false);
             VueCommandes.boutonSeche.setEnabled(false);
+            VueCommandes.boutonchercherCle.setEnabled(false);
             VueCommandes.boutonRecup.setEnabled(false);
             VueCommandes.actionsRestantes.setEnabled(false);
             VueCommandes.tourdujoueur.setEnabled(false);
@@ -674,11 +835,13 @@ class Controleur implements ActionListener {
         VueCommandes.boutonGauche.setEnabled(false);
         VueCommandes.boutonBas.setEnabled(false);
         VueCommandes.boutonSeche.setEnabled(false);
+        VueCommandes.boutonchercherCle.setEnabled(false);
         VueCommandes.boutonRecup.setEnabled(false);
         VueCommandes.actionsRestantes.setEnabled(false);
         VueCommandes.tourdujoueur.setEnabled(false);
         VueCommandes.inventaire.setEnabled(false);
 }
+    
         
 
     
