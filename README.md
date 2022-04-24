@@ -9,9 +9,6 @@ Ilyes Tebourski, Maxime Parizot
 10.3 : 1) 2) 3) ∞) <br/>
 10.4 : échange de clé
 
-* Choix d'architecture : <br/>
-(à compléter)
-
 * Problèmes toujours présents : <br/>
 x <br/>
 
@@ -39,3 +36,6 @@ Bouton "sèche" qui assèche la case sur laquelle le joueur se trouve et les 4 c
 Bouton "récupérer artefact" qui récupère un artefact si le joueur se trouve sur la même case et qu'il a 2 clés du bon type <br/>
 Bouton "chercher clé" qui peut donner une clé aléatoire, inonder 3 cases au hasard ou ne rien faire <br/>
 Boutons de dons de clés "air/terre/feu/eau" qui transfère la clé choisie au joueur adjacent si strictement 2 joueurs sont côte à côte <br/>
+
+* Choix d'architecture : <br/>
+(à compléter)
