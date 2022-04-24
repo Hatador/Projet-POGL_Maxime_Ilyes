@@ -113,7 +113,7 @@ class CModele extends Observable {
         msg.setFont(new Font(" Serif",Font.BOLD,20));
         msg.setBounds(50,20,100,40);
         msge.add(msg); 
-        message = new JLabel ("Prenez Garde cet ile semble pour le moins ... instable "); 
+        message = new JLabel ("Prenez garde cette ile semble pour le moins ... instable "); 
         message.setForeground(Color.RED);
         msge.add(message); 
         
@@ -121,8 +121,8 @@ class CModele extends Observable {
 
     public void avance() { 
         Random r = new Random();
-        int low = 1;
-        int high = LARGEUR-1;
+        int low = 0;
+        int high = LARGEUR;
 
         for(int k=1; k <= 3; k++){          // on tire une cellule au hasard 
             int i = r.nextInt(high-low) + low;
@@ -209,14 +209,14 @@ class CModele extends Observable {
     public void recupereartefact(Joueur J, Cellule C){
         switch (C.etat) {   
         //pour chaque artefact on verifie que le joueur possede bien les clés sinon on leve un erreur 
-            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obetnu l'artefact de l'eau");}
-            else {this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obetnu l'artefact de la terre");}else {
-                this.message.setText("Clé manquante (terre) ");throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obetnu l'artefact de l'air");}else {
-                this.message.setText("Clé manquante (air) ");throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obetnu l'artefact du feu");} else {
-                this.message.setText("Clé manquante (feu) ");throw new IllegalStateException("C"); }; break ;
+            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obtenu l'artefact de l'eau");}
+            else {this.message.setText("Clef manquante (eau) ");throw new IllegalStateException("C"); }; break ;
+            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obtenu l'artefact de la terre");}else {
+                this.message.setText("Clef manquante (terre) ");throw new IllegalStateException("C"); }; break ;
+            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obtenu l'artefact de l'air");}else {
+                this.message.setText("Clef manquante (air) ");throw new IllegalStateException("C"); }; break ;
+            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obtenu l'artefact du feu");} else {
+                this.message.setText("Clef manquante (feu) ");throw new IllegalStateException("C"); }; break ;
             default : this.message.setText("Aucun artefact ici");  throw new IllegalStateException("C"); 
         };               
     }
@@ -251,7 +251,7 @@ class CModele extends Observable {
             case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
             case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
             case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
-            case 5 : avance();this.message.setText("Vous avez declencher une montee des eaux !");break;
+            case 5 : avance();this.message.setText("Vous avez declenche une montee des eaux !");break;
             default :this.message.setText("...Mais rien ne se passe");break; 
         }; 
     }
@@ -410,14 +410,14 @@ class Joueur {
     public boolean possede2cle(String cle){
         for(int i=0;i<this.cles.size();i++){
             if (this.cles.get(i)==cle){
-                int k=i;
-                if(k != this.cles.size()-1){
-                    for(int j=k;j<this.cles.size();j++){
-                        if (this.cles.get(j)==cle){
-                            return true ; 
+                this.cles.remove(cle); 
+                for(int j=0;j<this.cles.size();j++){
+                    if (this.cles.get(j)==cle){
+                        this.cles.add(cle);
+                        return true;
                         }
                 }
-                }
+                this.cles.add(cle);
                 
             }
         }return false ; 
@@ -733,7 +733,7 @@ class VueCommandes extends JPanel {
         Actions.add(boutonchercherCle); 
         this.boutonchercherCle= boutonchercherCle ; 
 
-        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
+        JLabel actionsRestantes = new JLabel("Actions Restantes : 5");
         Actions.add(actionsRestantes); 
         this.actionsRestantes= actionsRestantes ; 
 
@@ -808,7 +808,7 @@ class VueCommandes extends JPanel {
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 5;        // pour limiter le nombre d'action on implemente un compteur 
     private static int numjoueur = 1;
     
 
@@ -823,7 +823,7 @@ class Controleur implements ActionListener {
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=3;
+            cpt=5;
             numjoueur++;
             
             if (numjoueur>4){numjoueur=1;}
@@ -905,8 +905,8 @@ class Controleur implements ActionListener {
     VueCommandes.actionsRestantes.setText("Actions Restantes : " + cpt);
 
         if(modele.conditionDefaite(j)){
-            VueCommandes.inventaire.setText("PARTIE PERDUE");                      // a la fin de la partie on désactive tout les boutons 
-            VueCommandes.boutonAvance.setText("PARTIE PERDUE");
+                                  
+            VueCommandes.boutonAvance.setText("PARTIE PERDUE"); // a la fin de la partie on désactive tout les boutons 
             VueCommandes.boutonAvance.setEnabled(false);
             VueCommandes.boutonHaut.setEnabled(false);
             VueCommandes.boutonDroite.setEnabled(false);
@@ -922,6 +922,7 @@ class Controleur implements ActionListener {
             VueCommandes.donneFeu.setEnabled(false);
             VueCommandes.donneTerre.setEnabled(false);
             VueCommandes.donneAir.setEnabled(false);
+            modele.message.setText("PARTIE GAGNE !");
 
 
 
