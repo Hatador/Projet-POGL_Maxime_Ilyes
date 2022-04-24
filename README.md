@@ -18,7 +18,7 @@ test de méthodes
 documentation; description des parametres, description des retours, courtes desc de la fonction
 
 ////
-avancement 22/4
+avancement 24/4
 
 10.1 fait
 
