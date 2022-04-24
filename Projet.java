@@ -9,11 +9,9 @@ import java.lang.ProcessHandle.Info;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSliderUI.ActionScroller;
 
-
 interface Observer {
 
     public void update();
-
 }
 
 abstract class Observable {
@@ -103,7 +101,7 @@ class CModele extends Observable {
         for (int k=3;k<=7;k++){
             int i = r.nextInt(high-low) + low;
             int j = r.nextInt(high-low) + low;
-            while (cellules[i][j].etat >1 && cellules[i][j].j == null  ){    // on  verifie que la case tiré soit valide sinon on en tire une autre 
+            while (cellules[i][j].etat >1 && cellules[i][j].j == null  ){      // on  verifie que la case tiré soit valide sinon on en tire une autre 
             i = r.nextInt(high-low) + low;
             j = r.nextInt(high-low) + low;
             }
@@ -119,7 +117,7 @@ class CModele extends Observable {
         msg.setFont(new Font(" Serif",Font.BOLD,20));
         msg.setBounds(50,20,100,40);
         msge.add(msg); 
-        message = new JLabel ("Prenez Garde cet ile semble pour le moins ... instable "); 
+        message = new JLabel ("Prenez garde cette ile semble pour le moins ... instable "); 
         message.setForeground(Color.RED);
         msge.add(message); 
         
@@ -131,8 +129,8 @@ class CModele extends Observable {
 
     public void avance() { 
         Random r = new Random();
-        int low = 0;
-        int high = LARGEUR+1;
+        int low = 1;
+        int high = LARGEUR;
 
         for(int k=1; k <= 3; k++){
             int i = r.nextInt(high-low) + low;
@@ -216,14 +214,14 @@ class CModele extends Observable {
     }
     public void recupereartefact(Joueur J, Cellule C){
         switch (C.etat) {
-            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obetnu l'artefact de l'eau");}
-            else {this.message.setText("Clé manquante (eau) ");throw new IllegalStateException("C"); }; break ;
-            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obetnu l'artefact de la terre");}else {
-                this.message.setText("Clé manquante (terre) ");throw new IllegalStateException("C"); }; break ;
-            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obetnu l'artefact de l'air");}else {
-                this.message.setText("Clé manquante (air) ");throw new IllegalStateException("C"); }; break ;
-            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obetnu l'artefact du feu");} else {
-                this.message.setText("Clé manquante (feu) ");throw new IllegalStateException("C"); }; break ;
+            case 4 : if (J.possede2cle("eau")){J.recoiteartefact("eau");C.etat=0;J.enleve2cle("eau");this.message.setText("Vous avez obtenu l'artefact de l'eau");}
+            else {this.message.setText("Clef manquante (eau) ");throw new IllegalStateException("C"); }; break ;
+            case 5 :  if (J.possede2cle("terre")){J.recoiteartefact("terre");C.etat=0;J.enleve2cle("terre");this.message.setText("Vous avez obtenu l'artefact de la terre");}else {
+                this.message.setText("Clef manquante (terre) ");throw new IllegalStateException("C"); }; break ;
+            case 6 : if (J.possede2cle("air")){J.recoiteartefact("air");C.etat=0;J.enleve2cle("air");this.message.setText("Vous avez obtenu l'artefact de l'air");}else {
+                this.message.setText("Clef manquante (air) ");throw new IllegalStateException("C"); }; break ;
+            case 7 : if (J.possede2cle("feu")){J.recoiteartefact("feu");C.etat=0;J.enleve2cle("feu");this.message.setText("Vous avez obtenu l'artefact du feu");} else {
+                this.message.setText("Clef manquante (feu) ");throw new IllegalStateException("C"); }; break ;
             default : this.message.setText("Aucun artefact ici");  throw new IllegalStateException("C"); 
         };               
     }
@@ -258,7 +256,7 @@ class CModele extends Observable {
             case 2 : j.recoitcle("eau"); this.message.setText("Vous avez obtenu une clef de l'eau");break;
             case 3 : j.recoitcle("air"); this.message.setText("Vous avez obtenu une clef de l'air");;break; 
             case 4 : j.recoitcle("terre"); this.message.setText("Vous avez obtenu une clef de la terre");;break;
-            case 5 : avance();this.message.setText("Vous avez declencher une montee des eaux !");break;
+            case 5 : avance();this.message.setText("Vous avez declenche une montee des eaux !");break;
             default :this.message.setText("...Mais rien ne se passe");break; 
         }; 
     }
@@ -379,16 +377,16 @@ class CModele extends Observable {
 
 class Joueur {
 
-    private CModele modele; 
+  
     private final int id ; 
-    protected boolean EnVie; 
+  
     private ArrayList<String> cles ; 
     private ArrayList<String> artefacts ; 
 
     public Joueur (CModele modele,int id){
-        this.modele =modele; 
+  
         this.id= id; 
-        this.EnVie=true; 
+ 
         this.cles= new ArrayList<String>(); 
         this.artefacts=new ArrayList<String>(); 
     }
@@ -420,15 +418,16 @@ class Joueur {
     public boolean possede2cle(String cle){
         for(int i=0;i<this.cles.size();i++){
             if (this.cles.get(i)==cle){
-                int k=i;
-                if(k != this.cles.size()-1){
-                    for(int j=k;j<this.cles.size();j++){
-                        if (this.cles.get(j)==cle){
-                            return true ; 
-                        }
+                this.cles.remove(cle); 
+                for(int j=0;j<this.cles.size();j++){
+                    if (this.cles.get(j)==cle){
+                        this.cles.add(cle);
+                        return true;
+                    }
                 }
-                }
-                
+                this.cles.add(cle);
+
+
             }
         }return false ; 
     }
@@ -470,7 +469,7 @@ class Cellule {
 
 
 
-    public int estVivante() {
+    public int donneEtat() {
         return etat;
     }
     public boolean contientjoueur(Joueur J ){
@@ -558,81 +557,119 @@ class VueGrille extends JPanel implements Observer {
     private void paint(Graphics g, Cellule c, int x, int y) {
 
 
-        if (c.estVivante() == 1) {
+        if (c.donneEtat() == 1) {
             g.setColor(new Color(50, 150, 255));   // case inoncé (1) en bleu clair 
+            g.fillRect(x, y, TAILLE, TAILLE);
         } 
-        if (c.estVivante() == 2) {
+        if (c.donneEtat() == 2) {
             g.setColor(Color.BLUE);                           // case submergé (2) en bleu 
+            g.fillRect(x, y, TAILLE, TAILLE);
         }
-        if (c.estVivante() == 0) {
+        if (c.donneEtat() == 0) {
             g.setColor(Color.WHITE);                       // case basique (0) en blanc 
+            g.fillRect(x, y, TAILLE, TAILLE);
         }
-        if (c.estVivante() == 3) {
-            g.setColor(Color.darkGray);                    // helico (3) en gris foncé 
+        if (c.donneEtat() == 3) {                     // helico (3) en gris foncé  
+            g.setColor(Color.darkGray);
+            g.fillRect(x, y, TAILLE, TAILLE);
+            g.setColor(Color.RED);                                      
+            g.drawString("H",x+TAILLE*1/3,y+TAILLE*2/3); 
         }
 
-        if (c.estVivante()==4){
-            g.setColor(Color.CYAN);                           // eau (4)   en cyan 
+        if (c.donneEtat()==4){// eau (4)   en cyan 
+            g.setColor(Color.CYAN);
+            g.fillRect(x, y, TAILLE, TAILLE);
+            g.setColor(Color.BLUE);                                      
+            g.drawString("E",x+TAILLE*1/3,y+TAILLE*2/3); 
         }
-        if (c.estVivante()==5){
-            g.setColor(new Color(84, 38, 9));         // terre  (5) en marron foncé 
+        if (c.donneEtat()==5){// terre  (5) en marron  
+
+            g.setColor(new Color(160, 82, 45));
+            g.fillRect(x, y, TAILLE, TAILLE);
+            g.setColor(Color.BLACK);                                      
+            g.drawString("T",x+TAILLE*1/3,y+TAILLE*2/3); 
         }
-        if (c.estVivante()==6){
+        if (c.donneEtat()==6){
             g.setColor(new Color(250, 170, 142));     // air (6) en beige clair 
+            g.fillRect(x, y, TAILLE, TAILLE);
+            g.setColor(Color.WHITE);                                      
+            g.drawString("A",x+TAILLE*1/3,y+TAILLE*2/3); 
         }
-        if (c.estVivante()==7){
+        if (c.donneEtat()==7){
             g.setColor(new Color(250, 122, 0));      // feu (7)   en orange 
+            g.fillRect(x, y, TAILLE, TAILLE);
+            g.setColor(Color.RED);                                      
+            g.drawString("F",x+TAILLE*1/3,y+TAILLE*2/3); 
         }
-        if (c.estVivante()==8){
-            g.setColor(Color.RED);      // feu (7)   en orange 
+        if (c.donneEtat()==8){       // alteration des cellules quand la partie est perdu 
+            g.setColor(Color.RED);      
+            g.fillRect(x, y, TAILLE, TAILLE);
         }
-        if (c.estVivante()==9){
-            g.setColor(Color.GREEN);      // feu (7)   en orange 
+        if (c.donneEtat()==9){   // alteration des cellules quand la partie est gagné 
+            g.setColor(Color.GREEN);      
+            g.fillRect(x, y, TAILLE, TAILLE);
         }
 
-
-        
         for (int i=0;i<modele.Tjoueurs.size();i++){
-            if (c.contientjoueur(modele.Tjoueurs.get(i))){
+            if (c.contientjoueur(modele.Tjoueurs.get(i)) && modele.Tjoueurs.get(i)!=modele.Joueuractuel){
                 g.setColor(Color.BLACK);
-                if(c.estVivante() == 1){
+                g.fillRect(x, y, TAILLE, TAILLE);
+                if(c.donneEtat() == 1){
                     g.setColor(new Color(25,100,150));
+                    g.fillRect(x, y, TAILLE, TAILLE);
                 }
-                if(c.estVivante() == 2){
+                if(c.donneEtat() == 2){
                     g.setColor(new Color(0,50,100));
+                    g.fillRect(x, y, TAILLE, TAILLE);
                 }
-                if (c.estVivante()==4){
-                    g.setColor(new Color(0,204,204));                           
+                if (c.donneEtat()==4){
+                    g.setColor(new Color(0,204,204));    
+                    g.fillRect(x, y, TAILLE, TAILLE);                       
                 }
-                if (c.estVivante()==5){
-                    g.setColor(new Color(54, 18, 0));         
+                if (c.donneEtat()==5){
+                    g.setColor(new Color(54, 18, 0));   
+                    g.fillRect(x, y, TAILLE, TAILLE);      
                 }
-                if (c.estVivante()==6){
-                    g.setColor(new Color(180, 120, 100));     
+                if (c.donneEtat()==6){
+                    g.setColor(new Color(180, 120, 100));
+                    g.fillRect(x, y, TAILLE, TAILLE);     
                 }
-                if (c.estVivante()==7){
-                    g.setColor(new Color(200, 100, 0));      
+                if (c.donneEtat()==7){
+                    g.setColor(new Color(200, 100, 0));  
+                    g.fillRect(x, y, TAILLE, TAILLE);    
                 }
-
-
+                switch(i+1){
+                    case 1 : g.setColor(Color.YELLOW); g.drawString("J1",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                    case 2 : g.setColor(Color.GREEN); g.drawString("J2",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                    case 3 : g.setColor(Color.RED); g.drawString("J3",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                    case 4 : g.setColor(Color.WHITE); g.drawString("J4",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                };
 
             }
         }
         if (c.contientjoueur(modele.Joueuractuel)){
+            if (c.donneEtat()==0){
             g.setColor(Color.RED);
-            if(c.estVivante() == 1){
+            g.fillRect(x, y, TAILLE, TAILLE);
+            }
+
+            if(c.donneEtat() == 1){
                 g.setColor(new Color(175, 25, 25));
+                g.fillRect(x, y, TAILLE, TAILLE);
             }
-            if(c.estVivante() == 2){
+            if(c.donneEtat() == 2){
                 g.setColor(new Color(100,25,25));
+                g.fillRect(x, y, TAILLE, TAILLE);
             }
-            if(c.estVivante() >= 3){
-                g.setColor(new Color(137,25,25));
+            
+            switch(modele.Joueuractuel.getidjoueur()){
+                case 1 : g.setColor(Color.PINK); g.drawString("J1",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                case 2 : g.setColor(Color.PINK); g.drawString("J2",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                case 3 : g.setColor(Color.PINK); g.drawString("J3",x+TAILLE*1/4,y+TAILLE*2/3);break;
+                case 4 : g.setColor(Color.PINK); g.drawString("J4",x+TAILLE*1/4,y+TAILLE*2/3);break;
             }
         }
         
-        
-            g.fillRect(x, y, TAILLE, TAILLE);
         }
 }
 
@@ -705,7 +742,7 @@ class VueCommandes extends JPanel {
         Actions.add(boutonchercherCle); 
         this.boutonchercherCle= boutonchercherCle ; 
 
-        JLabel actionsRestantes = new JLabel("Actions Restantes : 3");
+        JLabel actionsRestantes = new JLabel("Actions Restantes : 5");
         Actions.add(actionsRestantes); 
         this.actionsRestantes= actionsRestantes ; 
 
@@ -782,7 +819,7 @@ class VueCommandes extends JPanel {
 class Controleur implements ActionListener {
 
     CModele modele;
-    private static int cpt = 3;        // pour limiter le nombre d'action on implemente un compteur 
+    private static int cpt = 5;        // pour limiter le nombre d'action on implemente un compteur 
     private static int numjoueur = 1;
     
 
@@ -801,7 +838,7 @@ class Controleur implements ActionListener {
             modele.avance();
             modele.lancer_de_des(j);
             modele.Joueursuivant(j);
-            cpt=3;
+            cpt=5;
             numjoueur++;
             
             if (numjoueur>4){numjoueur=1;}
@@ -900,14 +937,9 @@ class Controleur implements ActionListener {
             VueCommandes.donneFeu.setEnabled(false);
             VueCommandes.donneTerre.setEnabled(false);
             VueCommandes.donneAir.setEnabled(false);
+            modele.message.setText("PARTIE PERDUE !");
   
-            JPanel loose= new JPanel();                                        
-            JLabel a= new JLabel("VOUS AVEZ PERDU");      
-            a.setFont(new Font(" Serif",Font.BOLD,20));
-            a.setBounds(50,20,100,40);
-            a.setForeground(Color.RED);
-            loose.add(a);
-            modele.msge=loose;  
+            
 
 
 
@@ -932,13 +964,7 @@ class Controleur implements ActionListener {
         modele.message.setText("PARTIE GAGNE !");
 
 
-        JPanel win= new JPanel();                                        
-        JLabel a= new JLabel("VOUS AVEZ GAGNE");      
-        a.setFont(new Font(" Serif",Font.BOLD,20));
-        a.setBounds(50,20,100,40);
-        a.setForeground(Color.GREEN);
-        win.add(a);
-        modele.msge=win;  
+        
 }
 
 }
