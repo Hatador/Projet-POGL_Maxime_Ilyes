@@ -121,7 +121,7 @@ class CModele extends Observable {
 
     public void avance() { 
         Random r = new Random();
-        int low = 0;
+        int low = 1; //(commit du 25/04: j'ai juste fait passer cette valeur de 0 à 1 car j'avais oublié de la re-modifer, j'ai rien modifié d'autre)
         int high = LARGEUR;
 
         for(int k=1; k <= 3; k++){          // on tire une cellule au hasard 
